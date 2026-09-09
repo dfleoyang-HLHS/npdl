@@ -26,7 +26,16 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workshop_submissions.json")
+WORKSHOP_PAGE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "school-status-workshop.html")
 LOCK = threading.Lock()
+
+
+def load_workshop_page():
+    try:
+        with open(WORKSHOP_PAGE_FILE, "r", encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        return None
 
 DIMENSIONS = [
     {"id": "vision", "name": "願景與目標", "color": "#1E3A8A"},
@@ -533,6 +542,16 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, SUBMIT_HTML)
         elif path == "/wall":
             self._send(200, WALL_HTML)
+        elif path == "/workshop":
+            html = load_workshop_page()
+            if html is None:
+                self._send(
+                    404,
+                    "<h1>找不到 school-status-workshop.html</h1>"
+                    "<p>請確認它與 workshop_server.py 放在同一個資料夾。</p>",
+                )
+            else:
+                self._send(200, html)
         elif path == "/api/submissions":
             with LOCK:
                 items = load_submissions()
@@ -628,7 +647,13 @@ def main():
         print(" 請確認所有裝置都連到「同一個 Wi-Fi」，再開啟下列網址：")
     print()
     for ip in ips:
-        print("   老師提交分享： %s" % url(ip, port))
+        print("   老師規準卡片＋送出： %sworkshop" % url(ip, port))
+    print()
+    print(" ⚠ 請務必請老師連到上面這個網址（不是 GitHub Pages 那個 https 連結！），")
+    print("   否則瀏覽器會因為「安全網頁無法呼叫非安全網址」而擋下送出動作。")
+    print()
+    for ip in ips:
+        print("   簡易快速提交（不含規準卡片）： %s" % url(ip, port))
     print()
     for ip in ips:
         print("   投影分享牆　： %swall" % url(ip, port))

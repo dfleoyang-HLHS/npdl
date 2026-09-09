@@ -534,6 +534,13 @@
   partnerB.value = safeGet('workshop-partnerB') || '';
   serverUrl.value = safeGet('workshop-serverUrl') || '';
 
+  // 若這個頁面本身就是由 workshop_server.py 用 http 提供（例如 http://192.168.x.x/workshop），
+  // 代表同一台伺服器就在 location.host，直接帶入，同源送出不會被瀏覽器的安全機制擋下。
+  if (!serverUrl.value && location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    serverUrl.value = location.hostname;
+    safeSet('workshop-serverUrl', serverUrl.value);
+  }
+
   function updatePartnerDisplay() {
     const g = groupNo.value;
     const a = partnerA.value.trim();
