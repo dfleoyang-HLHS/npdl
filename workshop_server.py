@@ -284,6 +284,23 @@ WALL_HTML = """<!DOCTYPE html>
   .usage-body { padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px; }
   .usage-body .note { flex: 1 1 280px; max-width: 380px; margin-bottom: 0; }
   .usage-body .empty { width: 100%; }
+  #githubPanel {
+    max-width: 420px; margin: 0 auto 28px; padding: 18px 20px; background: #fff;
+    border-radius: 14px; box-shadow: 0 4px 14px -6px rgba(0,0,0,0.12); text-align: center;
+  }
+  #githubPanel .gh-label { font-size: 0.8rem; color: var(--slate); font-weight: 700; margin: 0 0 12px; }
+  #ghUploadBtn {
+    width: 100%; padding: 11px; border: none; border-radius: 999px; background: var(--navy);
+    color: #fff; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-bottom: 10px;
+  }
+  #ghUploadBtn:hover { background: var(--navy-dark); }
+  #ghUploadBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+  #ghToken {
+    width: 100%; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 10px;
+    font-size: 0.85rem; margin-bottom: 8px; font-family: inherit; box-sizing: border-box;
+  }
+  .gh-remember { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #94a3b8; justify-content: center; margin-bottom: 4px; }
+  #ghStatus { font-size: 0.75rem; min-height: 16px; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -304,6 +321,15 @@ WALL_HTML = """<!DOCTYPE html>
     <div class="usage-body" id="body-usage"><div class="empty">尚無分享</div></div>
   </div>
   <div id="adminBar"><button id="clearBtn">清除所有紀錄</button></div>
+
+  <div id="githubPanel">
+    <p class="gh-label">☁️ 上傳到 GitHub 分享牆（給主持人使用）</p>
+    <button id="ghUploadBtn" type="button">上傳 GitHub</button>
+    <input id="ghToken" type="password" placeholder="貼上 GitHub Personal Access Token" autocomplete="off">
+    <label class="gh-remember"><input type="checkbox" id="ghRemember"> 記住這個 Token（借用電腦請勿勾選）</label>
+    <p id="ghStatus"></p>
+  </div>
+
   <div id="footerBar">每 4 秒自動更新．學校現況評量規準工作坊</div>
 
 <script>
@@ -377,6 +403,91 @@ WALL_HTML = """<!DOCTYPE html>
     if (!confirm('確定要清除所有分享紀錄嗎？此動作無法復原。')) return;
     await fetch('/api/clear', { method: 'POST' });
     refresh();
+  });
+
+  // ---------- Upload to GitHub ----------
+  const GITHUB_CONFIG = { owner: 'dfleoyang-HLHS', repo: 'npdl', path: 'workshop_submissions.json', branch: 'main' };
+  const ghToken = document.getElementById('ghToken');
+  const ghRemember = document.getElementById('ghRemember');
+  const ghUploadBtn = document.getElementById('ghUploadBtn');
+  const ghStatus = document.getElementById('ghStatus');
+
+  try {
+    const saved = localStorage.getItem('gh-token');
+    if (saved) { ghToken.value = saved; ghRemember.checked = true; }
+  } catch (e) {}
+
+  function syncGhTokenStorage() {
+    try {
+      if (ghRemember.checked) localStorage.setItem('gh-token', ghToken.value);
+      else localStorage.removeItem('gh-token');
+    } catch (e) {}
+  }
+  ghRemember.addEventListener('change', syncGhTokenStorage);
+  ghToken.addEventListener('input', syncGhTokenStorage);
+
+  function setGhStatus(text, tone) {
+    const colors = { neutral: '#94a3b8', warn: '#d97706', ok: '#16a34a', err: '#dc2626' };
+    ghStatus.textContent = text;
+    ghStatus.style.color = colors[tone] || colors.neutral;
+    ghStatus.style.fontWeight = tone === 'neutral' ? 'normal' : '700';
+  }
+
+  function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  ghUploadBtn.addEventListener('click', async () => {
+    const token = ghToken.value.trim();
+    if (!token) {
+      setGhStatus('請先在下方輸入 GitHub Token。', 'warn');
+      return;
+    }
+
+    ghUploadBtn.disabled = true;
+    setGhStatus('上傳中…', 'neutral');
+
+    try {
+      const dataRes = await fetch('/api/submissions', { cache: 'no-store' });
+      const data = await dataRes.json();
+      const content = utf8ToBase64(JSON.stringify(data, null, 2));
+
+      const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+      const authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' };
+
+      let sha;
+      const getRes = await fetch(apiUrl + '?ref=' + GITHUB_CONFIG.branch, { headers: authHeaders });
+      if (getRes.status === 200) {
+        sha = (await getRes.json()).sha;
+      } else if (getRes.status !== 404) {
+        const err = await getRes.json().catch(() => ({}));
+        throw new Error('讀取現有檔案失敗（' + getRes.status + '）' + (err.message ? '：' + err.message : ''));
+      }
+
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
+        body: JSON.stringify(Object.assign(
+          {
+            message: '更新分享牆資料 ' + new Date().toLocaleString('zh-TW'),
+            content: content,
+            branch: GITHUB_CONFIG.branch
+          },
+          sha ? { sha } : {}
+        ))
+      });
+
+      if (putRes.ok) {
+        setGhStatus(`已成功上傳 ${data.length} 則分享到 GitHub！🎉（約 1-2 分鐘後線上頁面會更新）`, 'ok');
+      } else {
+        const err = await putRes.json().catch(() => ({}));
+        setGhStatus('上傳失敗（' + putRes.status + '）' + (err.message ? '：' + err.message : '，請確認 Token 是否正確且有寫入權限。'), 'err');
+      }
+    } catch (e) {
+      setGhStatus('上傳失敗：' + e.message, 'err');
+    } finally {
+      ghUploadBtn.disabled = false;
+    }
   });
 
   refresh();
