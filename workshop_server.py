@@ -260,17 +260,19 @@ WALL_HTML = """<!DOCTYPE html>
   }
   header h1 { margin: 0; font-size: 1.5rem; }
   header .meta { font-size: 0.9rem; color: #cbd5e1; text-align: right; }
+  header .meta #ghSyncStatus { font-size: 0.78rem; color: #a5b4fc; margin-top: 2px; }
   #urlBanner {
     background: #fffbeb; color: #92400e; text-align: center; padding: 10px 16px;
     font-size: 0.95rem; font-weight: 700; border-bottom: 1px solid #fde68a;
   }
   #urlBanner span { font-family: Consolas, monospace; background: #fff; padding: 2px 10px; border-radius: 6px; margin-left: 6px; }
-  #adminBar { text-align: center; padding-bottom: 18px; }
+  #adminBar { text-align: center; padding-bottom: 18px; display: flex; justify-content: center; gap: 10px; }
   #adminBar button {
     background: none; border: 1px solid #cbd5e1; color: #94a3b8; font-size: 0.75rem;
     padding: 6px 14px; border-radius: 999px; cursor: pointer;
   }
   #adminBar button:hover { color: #dc2626; border-color: #fca5a5; }
+  #ghDownloadBtn:hover { color: var(--navy); border-color: var(--navy); }
   #board {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 18px; padding: 24px 32px 48px;
@@ -318,6 +320,7 @@ WALL_HTML = """<!DOCTYPE html>
     <div class="meta">
       <div id="count">共 0 則分享</div>
       <div id="updated">尚未更新</div>
+      <div id="ghSyncStatus">GitHub：尚未同步</div>
     </div>
   </header>
   <div id="urlBanner">老師請用手機連到：<span id="submitUrl"></span></div>
@@ -329,7 +332,10 @@ WALL_HTML = """<!DOCTYPE html>
     </div>
     <div class="usage-body" id="body-usage"><div class="empty">尚無分享</div></div>
   </div>
-  <div id="adminBar"><button id="clearBtn">清除所有紀錄</button></div>
+  <div id="adminBar">
+    <button id="clearBtn">清除所有紀錄</button>
+    <button id="ghDownloadBtn">下載 GitHub 內容</button>
+  </div>
 
   <div id="githubPanel">
     <p class="gh-label">☁️ 上傳到 GitHub 分享牆（給主持人使用）</p>
@@ -339,7 +345,7 @@ WALL_HTML = """<!DOCTYPE html>
     <p id="ghStatus"></p>
   </div>
 
-  <div id="footerBar">每 4 秒自動更新．學校現況評量規準工作坊</div>
+  <div id="footerBar">每 4 秒自動更新（本機）．每 10 秒自動合併 GitHub 上的資料．學校現況評量規準工作坊</div>
 
 <script>
   const DIMENSIONS = __DIMENSIONS_JSON__;
@@ -362,51 +368,83 @@ WALL_HTML = """<!DOCTYPE html>
     return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
   }
 
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ---------- Merge local (LAN) submissions with GitHub (teacher direct-upload) submissions ----------
+  const GITHUB_CONFIG = { owner: 'dfleoyang-HLHS', repo: 'npdl', path: 'workshop_submissions.json', branch: 'main' };
+  let localItems = [];
+  let githubItems = [];
+  const ghSyncStatusEl = document.getElementById('ghSyncStatus');
+
+  function mergeItems(a, b) {
+    const map = new Map();
+    a.forEach(it => map.set(it.id, it));
+    b.forEach(it => map.set(it.id, it));
+    return Array.from(map.values());
+  }
+
+  function renderBoard(items) {
+    countEl.textContent = `共 ${items.length} 則分享`;
+    updatedEl.textContent = '最後更新：' + new Date().toLocaleTimeString('zh-TW');
+
+    DIMENSIONS.forEach(d => {
+      const list = items.filter(it => it.dimensionId === d.id).sort((a,b) => b.ts - a.ts);
+      document.getElementById('n-' + d.id).textContent = list.length;
+      const body = document.getElementById('body-' + d.id);
+      if (!list.length) { body.innerHTML = '<div class="empty">尚無分享</div>'; return; }
+      body.innerHTML = list.map(it => `
+        <div class="note" style="border-left-color:${d.color}">
+          ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
+          <div class="txt">${escapeHtml(it.text)}</div>
+          <div class="time">${fmtTime(it.ts)}</div>
+        </div>
+      `).join('');
+    });
+
+    const usageList = items.filter(it => it.dimensionId === 'usage').sort((a,b) => b.ts - a.ts);
+    document.getElementById('n-usage').textContent = usageList.length;
+    const usageBody = document.getElementById('body-usage');
+    if (!usageList.length) {
+      usageBody.innerHTML = '<div class="empty">尚無分享</div>';
+    } else {
+      usageBody.innerHTML = usageList.map(it => `
+        <div class="note" style="border-left-color:__USAGE_COLOR__">
+          ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
+          <div class="txt">${escapeHtml(it.text)}</div>
+          <div class="time">${fmtTime(it.ts)}</div>
+        </div>
+      `).join('');
+    }
+  }
+
   async function refresh() {
     try {
       const res = await fetch('/api/submissions', { cache: 'no-store' });
-      const items = await res.json();
-      countEl.textContent = `共 ${items.length} 則分享`;
-      updatedEl.textContent = '最後更新：' + new Date().toLocaleTimeString('zh-TW');
-
-      DIMENSIONS.forEach(d => {
-        const list = items.filter(it => it.dimensionId === d.id).sort((a,b) => b.ts - a.ts);
-        document.getElementById('n-' + d.id).textContent = list.length;
-        const body = document.getElementById('body-' + d.id);
-        if (!list.length) { body.innerHTML = '<div class="empty">尚無分享</div>'; return; }
-        body.innerHTML = list.map(it => `
-          <div class="note" style="border-left-color:${d.color}">
-            ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
-            <div class="txt">${escapeHtml(it.text)}</div>
-            <div class="time">${fmtTime(it.ts)}</div>
-          </div>
-        `).join('');
-      });
-
-      const usageList = items.filter(it => it.dimensionId === 'usage').sort((a,b) => b.ts - a.ts);
-      document.getElementById('n-usage').textContent = usageList.length;
-      const usageBody = document.getElementById('body-usage');
-      if (!usageList.length) {
-        usageBody.innerHTML = '<div class="empty">尚無分享</div>';
-      } else {
-        usageBody.innerHTML = usageList.map(it => `
-          <div class="note" style="border-left-color:__USAGE_COLOR__">
-            ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
-            <div class="txt">${escapeHtml(it.text)}</div>
-            <div class="time">${fmtTime(it.ts)}</div>
-          </div>
-        `).join('');
-      }
+      localItems = await res.json();
+      renderBoard(mergeItems(localItems, githubItems));
     } catch (e) {
       updatedEl.textContent = '連線中斷，重試中…';
     }
   }
 
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  async function fetchGithubItems() {
+    ghSyncStatusEl.textContent = 'GitHub：同步中…';
+    try {
+      const url = `https://raw.githubusercontent.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.branch}/${GITHUB_CONFIG.path}?t=${Date.now()}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('http ' + res.status);
+      githubItems = await res.json();
+      ghSyncStatusEl.textContent = `GitHub：已同步 ${githubItems.length} 則（${new Date().toLocaleTimeString('zh-TW')}）`;
+      renderBoard(mergeItems(localItems, githubItems));
+    } catch (e) {
+      ghSyncStatusEl.textContent = 'GitHub：同步失敗，稍後自動重試';
+    }
   }
 
   document.getElementById('submitUrl').textContent = location.origin + '/';
+  document.getElementById('ghDownloadBtn').addEventListener('click', fetchGithubItems);
 
   document.getElementById('clearBtn').addEventListener('click', async () => {
     if (!confirm('確定要清除所有分享紀錄嗎？此動作無法復原。')) return;
@@ -414,8 +452,7 @@ WALL_HTML = """<!DOCTYPE html>
     refresh();
   });
 
-  // ---------- Upload to GitHub ----------
-  const GITHUB_CONFIG = { owner: 'dfleoyang-HLHS', repo: 'npdl', path: 'workshop_submissions.json', branch: 'main' };
+  // ---------- Upload to GitHub (merges local-only items into whatever is already there) ----------
   const ghToken = document.getElementById('ghToken');
   const ghRemember = document.getElementById('ghRemember');
   const ghUploadBtn = document.getElementById('ghUploadBtn');
@@ -445,6 +482,9 @@ WALL_HTML = """<!DOCTYPE html>
   function utf8ToBase64(str) {
     return btoa(unescape(encodeURIComponent(str)));
   }
+  function base64ToUtf8(b64) {
+    return decodeURIComponent(escape(atob(b64.replace(/\\n/g, ''))));
+  }
 
   ghUploadBtn.addEventListener('click', async () => {
     const token = ghToken.value.trim();
@@ -456,42 +496,52 @@ WALL_HTML = """<!DOCTYPE html>
     ghUploadBtn.disabled = true;
     setGhStatus('上傳中…', 'neutral');
 
+    const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+    const authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' };
+    const maxAttempts = 4;
+
     try {
-      const dataRes = await fetch('/api/submissions', { cache: 'no-store' });
-      const data = await dataRes.json();
-      const content = utf8ToBase64(JSON.stringify(data, null, 2));
+      const localRes = await fetch('/api/submissions', { cache: 'no-store' });
+      const localData = await localRes.json();
 
-      const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-      const authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' };
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        let remoteItems = [];
+        let sha;
+        const getRes = await fetch(apiUrl + '?ref=' + GITHUB_CONFIG.branch, { headers: authHeaders, cache: 'no-store' });
+        if (getRes.status === 200) {
+          const info = await getRes.json();
+          sha = info.sha;
+          try { remoteItems = JSON.parse(base64ToUtf8(info.content)); } catch (e) { remoteItems = []; }
+        } else if (getRes.status !== 404) {
+          const err = await getRes.json().catch(() => ({}));
+          throw new Error('讀取現有資料失敗（' + getRes.status + '）' + (err.message ? '：' + err.message : ''));
+        }
 
-      let sha;
-      const getRes = await fetch(apiUrl + '?ref=' + GITHUB_CONFIG.branch, { headers: authHeaders });
-      if (getRes.status === 200) {
-        sha = (await getRes.json()).sha;
-      } else if (getRes.status !== 404) {
-        const err = await getRes.json().catch(() => ({}));
-        throw new Error('讀取現有檔案失敗（' + getRes.status + '）' + (err.message ? '：' + err.message : ''));
-      }
+        const remoteIds = new Set(remoteItems.map(it => it.id));
+        const toAdd = localData.filter(it => !remoteIds.has(it.id));
+        const merged = remoteItems.concat(toAdd);
+        const content = utf8ToBase64(JSON.stringify(merged, null, 2));
 
-      const putRes = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
-        body: JSON.stringify(Object.assign(
-          {
-            message: '更新分享牆資料 ' + new Date().toLocaleString('zh-TW'),
-            content: content,
-            branch: GITHUB_CONFIG.branch
-          },
-          sha ? { sha } : {}
-        ))
-      });
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
+          body: JSON.stringify(Object.assign(
+            { message: '同步本機分享牆資料 ' + new Date().toLocaleString('zh-TW'), content: content, branch: GITHUB_CONFIG.branch },
+            sha ? { sha } : {}
+          ))
+        });
 
-      if (putRes.ok) {
-        setGhStatus(`已成功上傳 ${data.length} 則分享到 GitHub！🎉（約 1-2 分鐘後線上頁面會更新）`, 'ok');
-      } else {
+        if (putRes.ok) {
+          setGhStatus(`已同步！新增了 ${toAdd.length} 則本機資料到 GitHub（合計 ${merged.length} 則）🎉`, 'ok');
+          githubItems = merged;
+          renderBoard(mergeItems(localItems, githubItems));
+          return;
+        }
+        if (putRes.status === 409 && attempt < maxAttempts) continue;
         const err = await putRes.json().catch(() => ({}));
-        setGhStatus('上傳失敗（' + putRes.status + '）' + (err.message ? '：' + err.message : '，請確認 Token 是否正確且有寫入權限。'), 'err');
+        throw new Error('上傳失敗（' + putRes.status + '）' + (err.message ? '：' + err.message : '，請確認 Token 是否正確且有寫入權限。'));
       }
+      setGhStatus('上傳失敗：太多人同時上傳，請稍後再試一次。', 'err');
     } catch (e) {
       setGhStatus('上傳失敗：' + e.message, 'err');
     } finally {
@@ -500,7 +550,9 @@ WALL_HTML = """<!DOCTYPE html>
   });
 
   refresh();
+  fetchGithubItems();
   setInterval(refresh, 4000);
+  setInterval(fetchGithubItems, 10000);
 </script>
 </body>
 </html>
