@@ -21,6 +21,10 @@ import time
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workshop_submissions.json")
 LOCK = threading.Lock()
 
@@ -428,28 +432,68 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, "Not Found")
 
 
+DEFAULT_PORT = 80
+FALLBACK_PORT = 8080
+
+
+def url(ip, port):
+    return "http://%s/" % ip if port == 80 else "http://%s:%d/" % (ip, port)
+
+
+def start_server(port):
+    return ThreadingHTTPServer(("0.0.0.0", port), Handler)
+
+
 def main():
-    port = 8000
+    port = DEFAULT_PORT
     if len(sys.argv) > 1:
         try:
             port = int(sys.argv[1])
         except ValueError:
             pass
 
-    server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    try:
+        server = start_server(port)
+    except OSError as e:
+        print("=" * 56)
+        print(" 無法啟動伺服器在連接埠 %d：%s" % (port, e))
+        print("=" * 56)
+        if port == DEFAULT_PORT:
+            print(" 可能原因：連接埠 80 已被其他程式占用（例如 Skype、IIS），")
+            print(" 或需要系統管理員權限。")
+            print()
+            print(" 請改用其他連接埠再試一次，例如：")
+            print("   python workshop_server.py %d" % FALLBACK_PORT)
+            print(" 注意：改用非 80 的連接埠後，老師端網址就需要加上 :%d，" % FALLBACK_PORT)
+            print(" 無法再只打 IP 位置。")
+        else:
+            print(" 請確認連接埠 %d 沒有被其他程式占用，或改用其他數字再試一次。" % port)
+        print("=" * 56)
+        sys.exit(1)
+
     ips = get_local_ips()
 
     print("=" * 56)
     print(" 花蓮高中 NPDL 工作坊．現場分享牆伺服器已啟動")
     print("=" * 56)
     print()
-    print(" 請確認所有裝置都連到「同一個 Wi-Fi」，再開啟下列網址：")
+    if port == DEFAULT_PORT:
+        print(" 老師端只要在瀏覽器網址列輸入下面的 IP 位置即可，")
+        print(" 不需要輸入 http:// 或連接埠：")
+    else:
+        print(" 請確認所有裝置都連到「同一個 Wi-Fi」，再開啟下列網址：")
     print()
     for ip in ips:
-        print("   老師提交分享： http://%s:%d/" % (ip, port))
+        print("   老師提交分享： %s" % url(ip, port))
     print()
     for ip in ips:
-        print("   投影分享牆　： http://%s:%d/wall" % (ip, port))
+        print("   投影分享牆　： %swall" % url(ip, port))
+    print()
+    print(" ⚠ 第一次啟動時，Windows 可能會跳出「Windows 防火牆已封鎖部分")
+    print("   功能」的視窗，請務必勾選「私人網路」與「公用網路」兩個選項")
+    print("   後按「允許存取」，否則其他裝置將無法連線送出分享。")
+    print("   若已經跳過這個視窗，可到「Windows 安全性 → 防火牆與網路保護")
+    print("   → 允許應用程式通過防火牆」，找到 Python 並勾選兩個網路類型。")
     print()
     print(" 按 Ctrl+C 可停止伺服器。資料會儲存在：")
     print("   %s" % DATA_FILE)
