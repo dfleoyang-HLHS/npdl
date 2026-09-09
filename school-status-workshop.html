@@ -592,8 +592,11 @@
       .map(d => ({ id: d.id, text: (safeGet(noteKey(d.id)) || '').trim() }))
       .filter(d => d.text);
 
+    const usageText = (safeGet('workshop-usage-note') || '').trim();
+    if (usageText) toSend.push({ id: 'usage', text: usageText });
+
     if (!toSend.length) {
-      setWallStatus('目前五個向度都還沒有記錄想法，寫一些之後再送出吧。', 'warn');
+      setWallStatus('目前五個向度和使用方式討論都還沒有記錄想法，寫一些之後再送出吧。', 'warn');
       return;
     }
 

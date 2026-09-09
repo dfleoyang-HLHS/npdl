@@ -35,7 +35,9 @@ DIMENSIONS = [
     {"id": "deepening", "name": "深化學習", "color": "#1E3A8A"},
     {"id": "assessment", "name": "新的評估與檢核", "color": "#15803d"},
 ]
-DIM_BY_ID = {d["id"]: d for d in DIMENSIONS}
+USAGE_DIM = {"id": "usage", "name": "討論：在學校使用該評量規準的方式", "color": "#7c3aed"}
+ALL_DIMS = DIMENSIONS + [USAGE_DIM]
+DIM_BY_ID = {d["id"]: d for d in ALL_DIMS}
 
 
 def load_submissions():
@@ -75,7 +77,7 @@ def get_local_ips():
 
 DIMENSION_OPTIONS_HTML = "\n".join(
     '<option value="%s">%s</option>' % (d["id"], d["name"]) for d in DIMENSIONS
-)
+) + '\n<option value="usage">💬 %s</option>' % USAGE_DIM["name"]
 
 SUBMIT_HTML = """<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -277,6 +279,11 @@ WALL_HTML = """<!DOCTYPE html>
   .empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 20px 0; }
   @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   #footerBar { text-align: center; padding: 14px; font-size: 0.8rem; color: #94a3b8; }
+  #usageSection { margin: 0 32px 40px; background: #fff; border-radius: 16px; box-shadow: 0 8px 24px -12px rgba(30,58,138,0.2); overflow: hidden; }
+  .usage-head { padding: 16px 20px; color: #fff; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; background: __USAGE_COLOR__; }
+  .usage-body { padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px; }
+  .usage-body .note { flex: 1 1 280px; max-width: 380px; margin-bottom: 0; }
+  .usage-body .empty { width: 100%; }
 </style>
 </head>
 <body>
@@ -289,6 +296,13 @@ WALL_HTML = """<!DOCTYPE html>
   </header>
   <div id="urlBanner">老師請用手機連到：<span id="submitUrl"></span></div>
   <div id="board"></div>
+  <div id="usageSection">
+    <div class="usage-head">
+      <span>__USAGE_NAME__</span>
+      <span id="n-usage">0</span>
+    </div>
+    <div class="usage-body" id="body-usage"><div class="empty">尚無分享</div></div>
+  </div>
   <div id="adminBar"><button id="clearBtn">清除所有紀錄</button></div>
   <div id="footerBar">每 4 秒自動更新．學校現況評量規準工作坊</div>
 
@@ -333,6 +347,21 @@ WALL_HTML = """<!DOCTYPE html>
           </div>
         `).join('');
       });
+
+      const usageList = items.filter(it => it.dimensionId === 'usage').sort((a,b) => b.ts - a.ts);
+      document.getElementById('n-usage').textContent = usageList.length;
+      const usageBody = document.getElementById('body-usage');
+      if (!usageList.length) {
+        usageBody.innerHTML = '<div class="empty">尚無分享</div>';
+      } else {
+        usageBody.innerHTML = usageList.map(it => `
+          <div class="note" style="border-left-color:__USAGE_COLOR__">
+            ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
+            <div class="txt">${escapeHtml(it.text)}</div>
+            <div class="time">${fmtTime(it.ts)}</div>
+          </div>
+        `).join('');
+      }
     } catch (e) {
       updatedEl.textContent = '連線中斷，重試中…';
     }
@@ -359,7 +388,11 @@ WALL_HTML = """<!DOCTYPE html>
 
 DIMENSIONS_JSON = json.dumps(DIMENSIONS, ensure_ascii=False)
 SUBMIT_HTML = SUBMIT_HTML.replace("__DIMENSION_OPTIONS__", DIMENSION_OPTIONS_HTML)
-WALL_HTML = WALL_HTML.replace("__DIMENSIONS_JSON__", DIMENSIONS_JSON)
+WALL_HTML = (
+    WALL_HTML.replace("__DIMENSIONS_JSON__", DIMENSIONS_JSON)
+    .replace("__USAGE_COLOR__", USAGE_DIM["color"])
+    .replace("__USAGE_NAME__", USAGE_DIM["name"])
+)
 
 
 class Handler(BaseHTTPRequestHandler):
