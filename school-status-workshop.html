@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學校現況規準工作坊｜花蓮高中 NPDL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: {
+            50: '#eef2fb',
+            100: '#d7e0f5',
+            200: '#b7c6ea',
+            600: '#2547a3',
+            700: '#1E3A8A',
+            800: '#152a63',
+            900: '#0f1e47'
+          },
+          leaf: {
+            50: '#f0fdf4',
+            100: '#dcfce7',
+            500: '#16a34a',
+            600: '#15803d'
+          },
+          amber: {
+            50: '#fffbeb',
+            100: '#fef3c7',
+            400: '#fb923c',
+            500: '#f97316'
+          }
+        },
+        fontFamily: {
+          sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', sans-serif; }
+  .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 35px -10px rgba(30,58,138,0.35); }
+  .fade-up { animation: fadeUp 0.8s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tab-btn.active { color: #fff; box-shadow: 0 10px 20px -8px rgba(30,58,138,0.5); }
+  .dot { transition: all 0.3s ease; }
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff !important; }
+    #summary { padding-top: 1rem !important; }
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- Header / Navigation -->
+<header id="top" class="no-print fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-navy-800 transition-colors">花</div>
+        <div class="leading-tight">
+          <p class="font-bold text-navy-700 text-base sm:text-lg">花蓮高中</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 tracking-wide">現況規準工作坊</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-navy-700 transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          回首頁
+        </a>
+        <a href="#intro" class="nav-link hover:text-navy-700 transition-colors">工作坊說明</a>
+        <a href="#cards" class="nav-link hover:text-navy-700 transition-colors">規準卡片</a>
+        <a href="#summary" class="nav-link hover:text-navy-700 transition-colors">統整紀錄</a>
+      </nav>
+
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg text-navy-700 hover:bg-navy-50" aria-label="開啟選單">
+        <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="iconClose" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 bg-white">
+    <div class="px-4 py-3 flex flex-col gap-1 text-sm font-medium text-slate-600">
+      <a href="index.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">← 回首頁</a>
+      <a href="#intro" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">工作坊說明</a>
+      <a href="#cards" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">規準卡片</a>
+      <a href="#summary" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">統整紀錄</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="no-print relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden bg-gradient-to-br from-navy-800 via-navy-700 to-navy-900">
+  <div class="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
+    <svg class="w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <circle cx="120" cy="80" r="140" fill="#ffffff"/>
+      <circle cx="700" cy="480" r="200" fill="#fb923c"/>
+      <circle cx="650" cy="60" r="90" fill="#16a34a"/>
+    </svg>
+  </div>
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="fade-up inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-6">SCHOOL CAPACITY FOR DEEP LEARNING</p>
+    <h1 class="fade-up text-3xl sm:text-5xl font-black text-white leading-tight mb-6">學校現況規準工作坊</h1>
+    <p class="fade-up text-sm sm:text-lg text-navy-100/80 max-w-2xl mx-auto mb-8">
+      兩人一組，透過卡片閱讀與對話，建立對促進深度學習與創新實踐的學校現況之理解。
+    </p>
+    <div class="fade-up flex flex-wrap items-center justify-center gap-3 mb-10 text-xs sm:text-sm">
+      <span class="px-4 py-2 rounded-full bg-white/10 text-white font-medium">⏱ 45–60 分鐘</span>
+      <span class="px-4 py-2 rounded-full bg-white/10 text-white font-medium">👥 兩人一組</span>
+      <span class="px-4 py-2 rounded-full bg-white/10 text-white font-medium">🗂 5 個向度規準卡片</span>
+    </div>
+    <a href="#intro" class="fade-up inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-900/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
+      開始工作坊
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- 工作坊說明 -->
+<section id="intro" class="no-print py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">HOW THIS WORKSHOP WORKS</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">工作坊怎麼進行</h2>
+      <p class="text-slate-500 text-sm sm:text-base">目的：建立對促進深度學習和創新實踐的學校現況之理解。</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-navy-700 text-white flex items-center justify-center font-bold mb-4 text-sm">1</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">兩人一組，決定夥伴</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">找一位夥伴，準備好一起閱讀與對話。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold mb-4 text-sm">2</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">輪流朗讀規準卡片</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">每張卡片呈現一個向度的四個發展階段，一人先讀，另一人聆聽。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold mb-4 text-sm">3</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">記錄關鍵想法</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">對照描述，寫下你們對學校現況最有共鳴的字句與想法。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-navy-700 text-white flex items-center justify-center font-bold mb-4 text-sm">4</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">討論並尋找共同點</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">交換彼此的觀察，討論什麼是最重要的問題，達成共識後再寫下來。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold mb-4 text-sm">5</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">完成五個向度</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">依序完成願景與目標、領導力、協作文化、深化學習、新的評估與檢核。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold mb-4 text-sm">6</div>
+        <h3 class="font-bold text-navy-700 mb-2 text-sm">統整並討論運用方式</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">在統整紀錄頁，討論在學校可以如何使用這份評量規準。</p>
+      </div>
+    </div>
+
+    <!-- 夥伴設定 -->
+    <div class="max-w-xl mx-auto bg-navy-50 rounded-2xl p-6 border border-navy-100">
+      <p class="text-xs font-bold text-navy-700 tracking-wide mb-3">✏️ 填寫組別與夥伴姓名（會顯示在統整紀錄與分享牆中）</p>
+
+      <label for="groupNo" class="text-xs font-bold text-slate-500 block mb-1.5">組別</label>
+      <select id="groupNo" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-navy-600 bg-white">
+        <option value="">請選擇組別</option>
+        <option value="第1組">第 1 組</option>
+        <option value="第2組">第 2 組</option>
+        <option value="第3組">第 3 組</option>
+        <option value="第4組">第 4 組</option>
+        <option value="第5組">第 5 組</option>
+      </select>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <input id="partnerA" type="text" placeholder="夥伴 A" class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-600">
+        <input id="partnerB" type="text" placeholder="夥伴 B" class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-600">
+      </div>
+
+      <label for="serverUrl" class="text-xs font-bold text-slate-500 block mb-1.5">現場分享牆網址（主持人現場公告，例如 http://192.168.1.5:8000）</label>
+      <input id="serverUrl" type="text" placeholder="http://192.168.1.5:8000" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-navy-600">
+
+      <button id="submitWallBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm shadow-lg transition-all">
+        送出到現場分享牆
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+      <p id="wallStatus" class="text-xs text-slate-400 text-center mt-3">完成規準卡片的關鍵想法後，隨時可以按上面的按鈕送出（可重複送出，晚一點想到新想法也能再送一次）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 規準卡片主體 -->
+<section id="cards" class="no-print py-16 sm:py-20 bg-slate-50 scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">SCHOOL STATUS RUBRIC · 5 DIMENSIONS</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">學校現況評量規準卡片</h2>
+      <p class="text-slate-500 text-sm sm:text-base">每個向度都有「證據有限、萌芽、加速、進階」四個發展階段，呈現學校可能的樣貌。</p>
+    </div>
+
+    <!-- Tabs -->
+    <div id="tabBar" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8"></div>
+
+    <!-- Card -->
+    <div id="cardWrap" class="max-w-4xl mx-auto"></div>
+
+    <!-- Prev / Next -->
+    <div class="max-w-4xl mx-auto flex items-center justify-between mt-8">
+      <button id="prevBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        上一個向度
+      </button>
+      <div id="dots" class="flex items-center gap-2"></div>
+      <button id="nextBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy-700 text-white font-bold text-sm hover:bg-navy-800 transition-colors">
+        下一個向度
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- 統整紀錄 -->
+<section id="summary" class="py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10 no-print">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">KEY IDEAS WORKSHEET</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">學校現況評量規準：關鍵想法組織表</h2>
+      <p id="summaryPartners" class="text-slate-500 text-sm sm:text-base"></p>
+    </div>
+    <div id="printHeader" class="hidden print:block mb-6">
+      <h2 class="text-xl font-black text-navy-700">學校現況評量規準：關鍵想法組織表</h2>
+      <p id="printPartners" class="text-sm text-slate-500 mt-1"></p>
+    </div>
+
+    <div id="summaryTable" class="space-y-4 mb-10"></div>
+
+    <div class="bg-navy-50 rounded-2xl p-6 sm:p-8 border border-navy-100">
+      <h3 class="font-bold text-navy-700 mb-2">💬 討論在學校使用該評量規準的方式</h3>
+      <p class="text-slate-500 text-sm mb-4">回顧五個向度後，我們學校可以如何運用這份評量規準？（例如：作為現況盤點、訂定下一階段目標，或作為對話工具）</p>
+      <textarea id="usageNote" rows="4" placeholder="寫下你們兩人討論後的共識……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
+    </div>
+
+    <div class="no-print flex flex-wrap items-center justify-between gap-3 mt-8">
+      <p id="saveStatus" class="text-xs text-slate-400">尚未輸入</p>
+      <div class="flex gap-3">
+        <button id="printBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy-700 hover:bg-navy-800 text-white font-bold text-xs sm:text-sm transition-colors">
+          🖨 列印本頁紀錄
+        </button>
+        <button id="clearAllBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-slate-500 font-bold text-xs sm:text-sm hover:text-amber-500 hover:border-amber-300 transition-colors">
+          清空所有紀錄
+        </button>
+      </div>
+    </div>
+
+    <p class="no-print text-center text-xs text-slate-400 mt-10">資料來源：Quinn, J., &amp; McEachen, J.（2017）。表 8.2 學校現況評量規準；操作指引 3.4 了解學校現況評量規準。New Pedagogies for Deep Learning™（NPDL）。</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="no-print bg-navy-900 text-navy-100 pt-12 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-white/10">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">花</div>
+        <p class="font-bold text-white">花蓮高中 <span class="text-navy-200 font-normal">｜ 回首頁</span></p>
+      </a>
+      <p class="text-sm text-navy-200/80">學校現況規準工作坊</p>
+    </div>
+    <p class="text-center text-xs text-navy-300/60 pt-6">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // ---------- Data (表 8.2 學校現況評量規準 / NPDL) ----------
+  const STAGE_LABELS = ['證據有限', '萌芽', '加速', '進階'];
+
+  const DATA = [
+    {
+      id: 'vision',
+      name: '願景與目標',
+      color: 'navy',
+      prompt: '對照四個階段的描述，我們學校目前的願景與目標最像哪一段？有哪些具體證據可以佐證？',
+      stages: [
+        '缺乏現成能實現深度學習的策略、目標或實作。決策和資源僅反映現狀。',
+        '有寫出清楚闡述深度學習的策略和目標。與資源和過程相關的一些決策顯示學校開始轉向深度學習。',
+        '有明訂被大家所理解的策略，清楚闡述深度學習目標及其執行方式。大多數決策都是由深度學習所驅動且與其目標一致。',
+        '有明訂簡潔且清楚闡述的策略，該策略明示深度學習的重點目標和支持執行的方式。該策略為學校成員所共有且會影響決策。'
+      ]
+    },
+    {
+      id: 'leadership',
+      name: '領導力',
+      color: 'leaf',
+      prompt: '在我們學校，除了正式職位的領導者之外，還有哪些人正在扮演「領頭學習者」的角色？',
+      stages: [
+        '領導者依賴正式的角色和結構，視深度學習為外加項目，而非變革流程的整合器或加速器。沒有打算培養學校領導者的策略，深度學習的參與僅限於一些早期的創新者。',
+        '學校逐漸出現領頭學習者，知道自己的角色是要培養領導者、發展結構、過程，以及正式和非正式的機會，這些都用來促進深度學習。學生、教師、家庭和社區的深度學習參與度開始逐漸增加。',
+        '領頭學習者已經建立了結構與過程，用以推動實作的轉變並能刻意培養領導者。整體學校都投入深度學習，包括積極參與深度學習的一些學生、家庭和社區。',
+        '領頭學習者的能力與明確的領導策略同時發展，讓學校的整體領導力得以發展、散播和廣布。學生、家庭、社區和學校的所有成員都知道深度學習並願意投入參與，且能影響到所有學生。'
+      ]
+    },
+    {
+      id: 'culture',
+      name: '協作文化',
+      color: 'amber',
+      prompt: '我們的教師之間，分享實作與想法的意願如何？有哪些跡象顯示信任度的高低？',
+      stages: [
+        '透過正式結構進行領導者、教師和學習者之間的協作，但沒有挑戰到「我們在這的慣常做事方式」。探究的作法不一致；不願意分享實作和想法反映出低落的信任度。能力建構的支持通常著重於個人需求，並未與深度學習明確連結。',
+        '開始發展有關深度學習的協作文化及共同的能力建構。領導者和教師們開始使用協作探究來反思現有的實作。學校出現一些架構及流程，以建構組織內縱向與橫向的關係和全校性的學習。支持協作的資源開始出現，但這些資源在運用上並不總是能夠產生聚焦、有連結性或連貫性的推動效果。',
+        '學校出現學習和協作探究的文化，大多數教師和領導者會反思、檢視和調整他們的教學和領導實作。基於教師和學生的需求來設計能力建構，並清楚聚焦於能推動並維持深度學習所需的知識與技能。通過縱向和橫向關係，協作和信任不斷增長，實作也越來越透明。學校層級的探究和學習需要各級教師的參與，教師也可能進行跨校的協作。',
+        '深度學習滲透於整個學校的協作文化中。協作學習成為規範，而集體的能力建構有賴組織的結構與流程。學校藉由培養強韌的縱向和橫向的關係來支持創新與冒險精神，並運用群體來改變群體。能力建構能全面且一致地聚焦探究教學的精確性，並在單一學校或跨校的協作過程中，納入學習循環與應用。'
+      ]
+    },
+    {
+      id: 'deepening',
+      name: '深化學習',
+      color: 'navy',
+      prompt: '我們學校的課程與深度學習素養之間的關係，目前是清楚可說明的，還是仍在摸索？',
+      stages: [
+        '尚未能具體化學校課程與深度學習素養之間的關係。開始發展深度學習的架構，但並非所有人都能理解，也無法有連貫性地用它來引導學習。個別教師和領導者各自獨立進行創新。少有教練和成員致力於支持深度學習。尚無法理解，也無法頻繁使用諸如協作探究和相互校準等的協作實踐。',
+        '開始能清楚說明深度學習與學校課程之間的關係。已經確認一些能改善教學法精確性的目標，但改善的策略可能還不明確，或是缺乏有連貫性的實施及支持。有些教師可能會使用深度協作實作，如協作探究和檢視學生作品的操作指引，但實作或支持缺乏連貫性。',
+        '能清楚說明學習和教學的目標。深度學習素養和核心課程標準之間的連結顯而易見。全校廣泛使用深度學習全面性的架構，用它來設計、評估深度學習經驗。全校用來建構協作學習架構的資源與專業性越來越一致。其他深度協作實作，像是協作探究和檢視學生作品的操作指引，也是如此。',
+        '全校都能清楚說明深度學習素養的學習目標、增進教學法精確性的目標、以及核心課程標準的學習目標，而且這些目標與預期的實施成果相互扣合。全校都能理解並一致地使用深度學習整體性的架構，用以設計及評估有效的深度學習經驗。全校都能用協作探究來檢視影響各階段學習的進程，也能一致性地使用操作指引來核對學生作品。'
+      ]
+    },
+    {
+      id: 'assessment',
+      name: '新的評估與檢核',
+      color: 'leaf',
+      prompt: '除了考試成績，我們學校還使用哪些方式來檢核學生的深度學習成長？',
+      stages: [
+        '對學生學習成功與成就的評估仍依賴狹隘的指標（例如測驗和少量的作品產出）來做檢核及追蹤。教師和學校領導者開始使用新的檢核來發展深度學習共同的語言和理解，但尚無法評估或檢核深度學習的現況，設計或成果。',
+        '透過使用多元且越來越大量的證據來源以檢核並追蹤進展與成功，開始發展混合方法的評量實作。開始發展能力建構的支持，以使用新的檢核，並設計有意義的評量。一些教師和領導者開始使用新的檢核來設計深度學習經驗，檢核學生的學習成果並檢視深度學習的現況。',
+        '教師和領導者有能力去評量、發展及檢核下列情形：學生在深度學習進程中的成長；能使深度學習發生的條件；能促進深度學習成果的深度學習設計效能。深度學習經驗能加速並連結至地方／國家的政策優先性和課程，透過結構化的過程而得以相互校準。教師開始為深度學習設計新的評量，這樣才能更清楚辨識深度學習的發生。',
+        '全校都能發展並檢核深度學習，並以之聚焦於集體能力建構。會作跨年度及跨時期的檢核並相互校準，並呈現出持續的成長。深度學習經驗顯示出學校課程與深度學習目標之間明確的一致性，並在學校內部和學校之間作正式的校準以建立可信度。分享回饋並利用它來深化學習設計。評量實作反映出對學生興趣和需求的深入了解，並使用各種證據來確定學習的進展和情況。'
+      ]
+    }
+  ];
+
+  const colorMap = {
+    navy:  { bg: 'bg-navy-700',  bgSoft: 'bg-navy-100',    text: 'text-navy-700',  border: 'border-navy-200' },
+    leaf:  { bg: 'bg-leaf-500',  bgSoft: 'bg-leaf-100',    text: 'text-leaf-600',  border: 'border-leaf-500/30' },
+    amber: { bg: 'bg-amber-500', bgSoft: 'bg-amber-100',   text: 'text-amber-500', border: 'border-amber-500/30' }
+  };
+
+  const STAGE_STYLE = [
+    { chip: 'bg-slate-100 text-slate-500',  body: 'bg-slate-50 border-slate-200 text-slate-600' },
+    { chip: 'bg-navy-50 text-navy-700',     body: 'bg-navy-50/60 border-navy-100 text-slate-700' },
+    { chip: 'bg-navy-100 text-navy-800',    body: 'bg-navy-100/60 border-navy-200 text-slate-700' },
+    { chip: 'bg-navy-700 text-white',       body: 'bg-navy-700 border-navy-700 text-white' }
+  ];
+
+  let activeIndex = 0;
+
+  const tabBar = document.getElementById('tabBar');
+  const cardWrap = document.getElementById('cardWrap');
+  const dotsWrap = document.getElementById('dots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function renderTabs() {
+    tabBar.innerHTML = DATA.map((d, i) => {
+      const cm = colorMap[d.color];
+      const isActive = i === activeIndex;
+      return `<button data-index="${i}" class="tab-btn ${isActive ? 'active ' + cm.bg : 'bg-white ' + cm.text} px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-slate-200 transition-all hover:-translate-y-0.5">
+        ${i + 1}. ${d.name}
+      </button>`;
+    }).join('');
+
+    tabBar.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeIndex = Number(btn.dataset.index);
+        renderAll();
+      });
+    });
+  }
+
+  function renderDots() {
+    dotsWrap.innerHTML = DATA.map((d, i) => {
+      const cm = colorMap[d.color];
+      const isActive = i === activeIndex;
+      return `<span class="dot w-2.5 h-2.5 rounded-full ${isActive ? cm.bg : 'bg-slate-200'}"></span>`;
+    }).join('');
+  }
+
+  function renderCard() {
+    const d = DATA[activeIndex];
+    const cm = colorMap[d.color];
+
+    cardWrap.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+        <div class="p-5 sm:p-7 border-b border-slate-100 flex items-center gap-4">
+          <span class="shrink-0 w-11 h-11 rounded-full ${cm.bgSoft} ${cm.text} flex items-center justify-center font-black">${activeIndex + 1}</span>
+          <div>
+            <h3 class="text-lg sm:text-xl font-bold text-navy-700">${d.name}</h3>
+            <p class="text-xs text-slate-400">第 ${activeIndex + 1}／${DATA.length} 張規準卡片</p>
+          </div>
+        </div>
+
+        <div class="px-5 sm:px-7 pt-5">
+          <div class="flex gap-3 bg-slate-50 rounded-xl p-4 mb-6">
+            <span class="text-lg">👥</span>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">兩人一組：由一位夥伴先朗讀下面四個階段的描述，另一位聆聽並圈選最有感觸的字句；讀完後交換角色，一起完成後方的關鍵想法記錄。</p>
+          </div>
+        </div>
+
+        <div class="px-5 sm:px-7 grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          ${d.stages.map((text, i) => `
+            <div class="rounded-xl border ${STAGE_STYLE[i].body} p-4">
+              <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded-full mb-2 ${STAGE_STYLE[i].chip}">${STAGE_LABELS[i]}</span>
+              <p class="text-xs sm:text-sm leading-relaxed">${text}</p>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="px-5 sm:px-7">
+          <div class="flex gap-3 ${cm.bgSoft} rounded-xl p-4">
+            <span class="text-lg">💭</span>
+            <p class="text-xs sm:text-sm ${cm.text} font-medium leading-relaxed">${d.prompt}</p>
+          </div>
+        </div>
+
+        <div class="px-5 sm:px-7 py-6">
+          <label class="text-xs font-bold text-slate-400 tracking-wide mb-2 block">📝 我們的關鍵想法</label>
+          <textarea id="noteArea" rows="4" placeholder="記錄下你們對這個向度最有共鳴的想法……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
+          <p id="cardSaveStatus" class="text-xs text-slate-400 mt-2">尚未輸入</p>
+        </div>
+      </div>
+    `;
+
+    bindNoteArea();
+  }
+
+  function renderNav() {
+    prevBtn.disabled = activeIndex === 0;
+    nextBtn.textContent = '';
+    if (activeIndex === DATA.length - 1) {
+      nextBtn.innerHTML = `前往統整紀錄
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>`;
+    } else {
+      nextBtn.innerHTML = `下一個向度
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>`;
+    }
+  }
+
+  function renderAll() {
+    renderTabs();
+    renderDots();
+    renderCard();
+    renderNav();
+    renderSummary();
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (activeIndex > 0) {
+      activeIndex--;
+      renderAll();
+      document.getElementById('cards').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (activeIndex < DATA.length - 1) {
+      activeIndex++;
+      renderAll();
+      document.getElementById('cards').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      document.getElementById('summary').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // ---------- localStorage helpers ----------
+  function safeGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSet(key, value) {
+    try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+  }
+  function safeRemove(key) {
+    try { localStorage.removeItem(key); } catch (e) {}
+  }
+
+  function noteKey(id) { return 'workshop-note-' + id; }
+
+  function bindNoteArea() {
+    const d = DATA[activeIndex];
+    const noteArea = document.getElementById('noteArea');
+    const status = document.getElementById('cardSaveStatus');
+    const saved = safeGet(noteKey(d.id));
+    noteArea.value = saved || '';
+    status.textContent = saved ? '已自動儲存於此瀏覽器' : '尚未輸入';
+
+    let timer = null;
+    noteArea.addEventListener('input', () => {
+      status.textContent = '輸入中…';
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const ok = safeSet(noteKey(d.id), noteArea.value);
+        status.textContent = ok ? '已自動儲存於此瀏覽器' : '此瀏覽器不支援本機儲存';
+        renderSummary();
+      }, 500);
+    });
+  }
+
+  // ---------- Group / Partners / Server ----------
+  const groupNo = document.getElementById('groupNo');
+  const partnerA = document.getElementById('partnerA');
+  const partnerB = document.getElementById('partnerB');
+  const serverUrl = document.getElementById('serverUrl');
+  groupNo.value = safeGet('workshop-groupNo') || '';
+  partnerA.value = safeGet('workshop-partnerA') || '';
+  partnerB.value = safeGet('workshop-partnerB') || '';
+  serverUrl.value = safeGet('workshop-serverUrl') || '';
+
+  function updatePartnerDisplay() {
+    const g = groupNo.value;
+    const a = partnerA.value.trim();
+    const b = partnerB.value.trim();
+    const parts = [g, (a || b) ? `${a || '（未填）'} ＆ ${b || '（未填）'}` : ''].filter(Boolean);
+    const text = parts.length ? `記錄組別／夥伴：${parts.join('｜')}` : '';
+    document.getElementById('summaryPartners').textContent = text;
+    document.getElementById('printPartners').textContent = text;
+  }
+  groupNo.addEventListener('change', () => { safeSet('workshop-groupNo', groupNo.value); updatePartnerDisplay(); });
+  partnerA.addEventListener('input', () => { safeSet('workshop-partnerA', partnerA.value); updatePartnerDisplay(); });
+  partnerB.addEventListener('input', () => { safeSet('workshop-partnerB', partnerB.value); updatePartnerDisplay(); });
+  serverUrl.addEventListener('input', () => { safeSet('workshop-serverUrl', serverUrl.value); });
+
+  // ---------- Submit to live wall ----------
+  const wallStatus = document.getElementById('wallStatus');
+  document.getElementById('submitWallBtn').addEventListener('click', async () => {
+    if (!groupNo.value) {
+      wallStatus.textContent = '請先選擇組別。';
+      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      return;
+    }
+    const base = serverUrl.value.trim().replace(/\/+$/, '');
+    if (!base) {
+      wallStatus.textContent = '請先填寫現場分享牆網址（由主持人現場公告）。';
+      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      return;
+    }
+
+    const a = partnerA.value.trim();
+    const b = partnerB.value.trim();
+    const namePart = (a || b) ? `${a || '未填'} ＆ ${b || '未填'}` : '';
+    const groupLabel = [groupNo.value, namePart].filter(Boolean).join('｜');
+
+    const toSend = DATA
+      .map(d => ({ id: d.id, text: (safeGet(noteKey(d.id)) || '').trim() }))
+      .filter(d => d.text);
+
+    if (!toSend.length) {
+      wallStatus.textContent = '目前五個向度都還沒有記錄想法，寫一些之後再送出吧。';
+      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      return;
+    }
+
+    wallStatus.textContent = '送出中…';
+    wallStatus.className = 'text-xs text-slate-400 text-center mt-3';
+
+    let okCount = 0;
+    for (const item of toSend) {
+      try {
+        const res = await fetch(base + '/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dimensionId: item.id, groupName: groupLabel, text: item.text })
+        });
+        if (res.ok) okCount++;
+      } catch (e) { /* network error, counted as failure below */ }
+    }
+
+    if (okCount === toSend.length) {
+      wallStatus.textContent = `已送出 ${okCount} 則向度想法到分享牆！🎉`;
+      wallStatus.className = 'text-xs text-leaf-600 text-center mt-3 font-bold';
+    } else if (okCount > 0) {
+      wallStatus.textContent = `送出 ${okCount}／${toSend.length} 則成功，其餘失敗，請確認網址與 Wi-Fi 後再試一次。`;
+      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+    } else {
+      wallStatus.textContent = '送出失敗，請確認分享牆網址是否正確、是否連上同一個 Wi-Fi。';
+      wallStatus.className = 'text-xs text-red-500 text-center mt-3 font-bold';
+    }
+  });
+
+  // ---------- Summary ----------
+  function renderSummary() {
+    const wrap = document.getElementById('summaryTable');
+    wrap.innerHTML = DATA.map(d => {
+      const cm = colorMap[d.color];
+      const note = safeGet(noteKey(d.id)) || '';
+      return `<div class="rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="flex items-center gap-3 ${cm.bgSoft} px-5 py-3">
+          <span class="text-sm font-bold ${cm.text}">${d.name}</span>
+        </div>
+        <div class="px-5 py-4">
+          <p class="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">${note ? note.replace(/</g, '&lt;') : '（尚未記錄）'}</p>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const usageNote = document.getElementById('usageNote');
+  const saveStatus = document.getElementById('saveStatus');
+  usageNote.value = safeGet('workshop-usage-note') || '';
+  saveStatus.textContent = usageNote.value ? '已自動儲存於此瀏覽器' : '尚未輸入';
+  let usageTimer = null;
+  usageNote.addEventListener('input', () => {
+    saveStatus.textContent = '輸入中…';
+    clearTimeout(usageTimer);
+    usageTimer = setTimeout(() => {
+      const ok = safeSet('workshop-usage-note', usageNote.value);
+      saveStatus.textContent = ok ? '已自動儲存於此瀏覽器' : '此瀏覽器不支援本機儲存';
+    }, 500);
+  });
+
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  document.getElementById('clearAllBtn').addEventListener('click', () => {
+    if (!confirm('確定要清空所有向度的關鍵想法與討論紀錄嗎？此動作無法復原。')) return;
+    DATA.forEach(d => safeRemove(noteKey(d.id)));
+    safeRemove('workshop-usage-note');
+    safeRemove('workshop-partnerA');
+    safeRemove('workshop-partnerB');
+    partnerA.value = '';
+    partnerB.value = '';
+    usageNote.value = '';
+    saveStatus.textContent = '尚未輸入';
+    updatePartnerDisplay();
+    renderAll();
+  });
+
+  renderAll();
+  updatePartnerDisplay();
+
+  // ---------- Header nav ----------
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconOpen = document.getElementById('iconOpen');
+  const iconClose = document.getElementById('iconClose');
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          iconOpen.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,465 @@
+# /// script
+# requires-python = ">=3.9"
+# dependencies = []
+# ///
+"""花蓮高中 NPDL 工作坊．現場分享牆 本機伺服器。
+
+用法：
+    uv run workshop_server.py [port]
+
+啟動後，讓所有裝置連到同一個 Wi-Fi，並在瀏覽器輸入伺服器印出的網址：
+    - 老師手機／平板：提交分享
+    - 投影布幕：即時分享牆（/wall）
+"""
+
+import json
+import os
+import socket
+import sys
+import threading
+import time
+import uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workshop_submissions.json")
+LOCK = threading.Lock()
+
+DIMENSIONS = [
+    {"id": "vision", "name": "願景與目標", "color": "#1E3A8A"},
+    {"id": "leadership", "name": "領導力", "color": "#15803d"},
+    {"id": "culture", "name": "協作文化", "color": "#f97316"},
+    {"id": "deepening", "name": "深化學習", "color": "#1E3A8A"},
+    {"id": "assessment", "name": "新的評估與檢核", "color": "#15803d"},
+]
+DIM_BY_ID = {d["id"]: d for d in DIMENSIONS}
+
+
+def load_submissions():
+    if not os.path.exists(DATA_FILE):
+        return []
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return []
+
+
+def save_submissions(items):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(items, f, ensure_ascii=False, indent=2)
+
+
+def get_local_ips():
+    ips = set()
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ips.add(s.getsockname()[0])
+        s.close()
+    except OSError:
+        pass
+    try:
+        hostname = socket.gethostname()
+        for info in socket.getaddrinfo(hostname, None, socket.AF_INET):
+            ip = info[4][0]
+            if not ip.startswith("127."):
+                ips.add(ip)
+    except OSError:
+        pass
+    return sorted(ips) or ["127.0.0.1"]
+
+
+DIMENSION_OPTIONS_HTML = "\n".join(
+    '<option value="%s">%s</option>' % (d["id"], d["name"]) for d in DIMENSIONS
+)
+
+SUBMIT_HTML = """<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>現場分享．花蓮高中 NPDL 工作坊</title>
+<style>
+  :root {
+    --navy: #1E3A8A; --navy-dark: #152a63; --navy-soft: #eef2fb;
+    --leaf: #16a34a; --amber: #f97316; --slate: #64748b; --bg: #f8fafc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: #1e293b;
+    font-family: "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif;
+    padding-bottom: 40px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+    color: #fff; padding: 28px 20px 24px; text-align: center;
+  }
+  header h1 { margin: 0 0 6px; font-size: 1.35rem; }
+  header p { margin: 0; font-size: 0.85rem; color: #cbd5e1; }
+  main { max-width: 480px; margin: -16px auto 0; padding: 0 16px; }
+  .card {
+    background: #fff; border-radius: 18px; padding: 22px 20px;
+    box-shadow: 0 10px 30px -12px rgba(30,58,138,0.25); margin-bottom: 18px;
+  }
+  label { display: block; font-weight: 700; font-size: 0.85rem; color: var(--navy); margin-bottom: 8px; }
+  select, input[type=text], textarea {
+    width: 100%; border: 1.5px solid #e2e8f0; border-radius: 12px;
+    padding: 12px 14px; font-size: 1rem; margin-bottom: 18px;
+    font-family: inherit; color: #1e293b; background: #fff;
+  }
+  select:focus, input:focus, textarea:focus { outline: none; border-color: var(--navy); }
+  textarea { resize: vertical; min-height: 100px; }
+  button {
+    width: 100%; padding: 15px; border: none; border-radius: 999px;
+    background: var(--amber); color: #fff; font-size: 1.05rem; font-weight: 700;
+    cursor: pointer; transition: transform .15s ease, opacity .15s ease;
+  }
+  button:active { transform: scale(0.98); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  #status { text-align: center; font-size: 0.85rem; margin-top: 10px; min-height: 20px; }
+  #status.ok { color: var(--leaf); font-weight: 700; }
+  #status.err { color: #dc2626; font-weight: 700; }
+  .mine { margin-top: 6px; }
+  .mine h2 { font-size: 0.8rem; color: var(--slate); text-transform: uppercase; letter-spacing: .05em; margin: 0 0 10px; }
+  .mine-item {
+    background: #fff; border-left: 4px solid var(--navy); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; font-size: 0.85rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .mine-item .dim { font-weight: 700; color: var(--navy); }
+  a.walllink {
+    display: block; text-align: center; margin-top: 8px; font-size: 0.8rem;
+    color: var(--slate); text-decoration: none;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>學校現況規準工作坊</h1>
+    <p>現場分享．送出後即時顯示在投影牆上</p>
+  </header>
+  <main>
+    <form class="card" id="submitForm">
+      <label for="dim">向度</label>
+      <select id="dim" required>
+        __DIMENSION_OPTIONS__
+      </select>
+
+      <label for="group">組別／夥伴姓名（選填）</label>
+      <input type="text" id="group" placeholder="例如：3 樓 A 組、王老師 ＆ 李老師">
+
+      <label for="text">關鍵想法</label>
+      <textarea id="text" placeholder="寫下你們兩人討論後的關鍵想法……" required></textarea>
+
+      <button type="submit" id="submitBtn">送出到分享牆</button>
+      <div id="status"></div>
+    </form>
+
+    <div class="mine" id="mineWrap" style="display:none;">
+      <h2>本裝置已送出</h2>
+      <div id="mineList"></div>
+    </div>
+
+    <a class="walllink" href="/wall" target="_blank">查看即時分享牆 →</a>
+  </main>
+
+<script>
+  const form = document.getElementById('submitForm');
+  const statusEl = document.getElementById('status');
+  const submitBtn = document.getElementById('submitBtn');
+  const mineWrap = document.getElementById('mineWrap');
+  const mineList = document.getElementById('mineList');
+
+  function loadMine() {
+    try { return JSON.parse(localStorage.getItem('workshop-mine') || '[]'); }
+    catch (e) { return []; }
+  }
+  function saveMine(list) {
+    try { localStorage.setItem('workshop-mine', JSON.stringify(list)); } catch (e) {}
+  }
+  function renderMine() {
+    const list = loadMine();
+    if (!list.length) { mineWrap.style.display = 'none'; return; }
+    mineWrap.style.display = 'block';
+    mineList.innerHTML = list.slice().reverse().map(item =>
+      `<div class="mine-item"><span class="dim">${item.dimName}</span>：${item.text}</div>`
+    ).join('');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const dimSelect = document.getElementById('dim');
+    const dimId = dimSelect.value;
+    const dimName = dimSelect.options[dimSelect.selectedIndex].text;
+    const group = document.getElementById('group').value.trim();
+    const text = document.getElementById('text').value.trim();
+    if (!text) return;
+
+    submitBtn.disabled = true;
+    statusEl.textContent = '送出中…';
+    statusEl.className = '';
+
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dimensionId: dimId, groupName: group, text: text })
+      });
+      if (!res.ok) throw new Error('failed');
+      statusEl.textContent = '已送出！謝謝分享 🎉';
+      statusEl.className = 'ok';
+      const mine = loadMine();
+      mine.push({ dimName, text, ts: Date.now() });
+      saveMine(mine);
+      renderMine();
+      document.getElementById('text').value = '';
+    } catch (err) {
+      statusEl.textContent = '送出失敗，請確認已連上同一個 Wi-Fi 後再試一次。';
+      statusEl.className = 'err';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  renderMine();
+</script>
+</body>
+</html>
+"""
+
+WALL_HTML = """<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>現場分享牆．花蓮高中 NPDL 工作坊</title>
+<style>
+  :root { --navy: #1E3A8A; --navy-dark: #152a63; --leaf: #16a34a; --amber: #f97316; --slate: #64748b; --bg: #f8fafc; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: #1e293b;
+    font-family: "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  }
+  header {
+    background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+    color: #fff; padding: 22px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header .meta { font-size: 0.9rem; color: #cbd5e1; text-align: right; }
+  #urlBanner {
+    background: #fffbeb; color: #92400e; text-align: center; padding: 10px 16px;
+    font-size: 0.95rem; font-weight: 700; border-bottom: 1px solid #fde68a;
+  }
+  #urlBanner span { font-family: Consolas, monospace; background: #fff; padding: 2px 10px; border-radius: 6px; margin-left: 6px; }
+  #adminBar { text-align: center; padding-bottom: 18px; }
+  #adminBar button {
+    background: none; border: 1px solid #cbd5e1; color: #94a3b8; font-size: 0.75rem;
+    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  }
+  #adminBar button:hover { color: #dc2626; border-color: #fca5a5; }
+  #board {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px; padding: 24px 32px 48px;
+  }
+  .col { background: #fff; border-radius: 16px; box-shadow: 0 8px 24px -12px rgba(30,58,138,0.2); overflow: hidden; display: flex; flex-direction: column; max-height: 78vh; }
+  .col-head { padding: 14px 18px; color: #fff; font-weight: 700; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; }
+  .col-body { padding: 14px; overflow-y: auto; flex: 1; }
+  .note {
+    background: #f8fafc; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    border-left: 4px solid #cbd5e1; animation: pop .3s ease both;
+  }
+  .note .grp { font-size: 0.75rem; font-weight: 700; color: var(--slate); margin-bottom: 4px; }
+  .note .txt { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+  .note .time { font-size: 0.7rem; color: #94a3b8; margin-top: 6px; }
+  .empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 20px 0; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  #footerBar { text-align: center; padding: 14px; font-size: 0.8rem; color: #94a3b8; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🗂 現場分享牆</h1>
+    <div class="meta">
+      <div id="count">共 0 則分享</div>
+      <div id="updated">尚未更新</div>
+    </div>
+  </header>
+  <div id="urlBanner">老師請用手機連到：<span id="submitUrl"></span></div>
+  <div id="board"></div>
+  <div id="adminBar"><button id="clearBtn">清除所有紀錄</button></div>
+  <div id="footerBar">每 4 秒自動更新．學校現況評量規準工作坊</div>
+
+<script>
+  const DIMENSIONS = __DIMENSIONS_JSON__;
+  const board = document.getElementById('board');
+  const countEl = document.getElementById('count');
+  const updatedEl = document.getElementById('updated');
+
+  board.innerHTML = DIMENSIONS.map(d => `
+    <div class="col" data-dim="${d.id}">
+      <div class="col-head" style="background:${d.color}">
+        <span>${d.name}</span>
+        <span id="n-${d.id}">0</span>
+      </div>
+      <div class="col-body" id="body-${d.id}"><div class="empty">尚無分享</div></div>
+    </div>
+  `).join('');
+
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  }
+
+  async function refresh() {
+    try {
+      const res = await fetch('/api/submissions', { cache: 'no-store' });
+      const items = await res.json();
+      countEl.textContent = `共 ${items.length} 則分享`;
+      updatedEl.textContent = '最後更新：' + new Date().toLocaleTimeString('zh-TW');
+
+      DIMENSIONS.forEach(d => {
+        const list = items.filter(it => it.dimensionId === d.id).sort((a,b) => b.ts - a.ts);
+        document.getElementById('n-' + d.id).textContent = list.length;
+        const body = document.getElementById('body-' + d.id);
+        if (!list.length) { body.innerHTML = '<div class="empty">尚無分享</div>'; return; }
+        body.innerHTML = list.map(it => `
+          <div class="note" style="border-left-color:${d.color}">
+            ${it.groupName ? `<div class="grp">${escapeHtml(it.groupName)}</div>` : ''}
+            <div class="txt">${escapeHtml(it.text)}</div>
+            <div class="time">${fmtTime(it.ts)}</div>
+          </div>
+        `).join('');
+      });
+    } catch (e) {
+      updatedEl.textContent = '連線中斷，重試中…';
+    }
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.getElementById('submitUrl').textContent = location.origin + '/';
+
+  document.getElementById('clearBtn').addEventListener('click', async () => {
+    if (!confirm('確定要清除所有分享紀錄嗎？此動作無法復原。')) return;
+    await fetch('/api/clear', { method: 'POST' });
+    refresh();
+  });
+
+  refresh();
+  setInterval(refresh, 4000);
+</script>
+</body>
+</html>
+"""
+
+DIMENSIONS_JSON = json.dumps(DIMENSIONS, ensure_ascii=False)
+SUBMIT_HTML = SUBMIT_HTML.replace("__DIMENSION_OPTIONS__", DIMENSION_OPTIONS_HTML)
+WALL_HTML = WALL_HTML.replace("__DIMENSIONS_JSON__", DIMENSIONS_JSON)
+
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, fmt, *args):
+        print("  [%s] %s" % (time.strftime("%H:%M:%S"), fmt % args))
+
+    def _send(self, code, body, content_type="text/html; charset=utf-8"):
+        data = body.encode("utf-8") if isinstance(body, str) else body
+        self.send_response(code)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def do_GET(self):
+        path = self.path.split("?")[0]
+        if path in ("/", "/submit", "/index.html"):
+            self._send(200, SUBMIT_HTML)
+        elif path == "/wall":
+            self._send(200, WALL_HTML)
+        elif path == "/api/submissions":
+            with LOCK:
+                items = load_submissions()
+            self._send(200, json.dumps(items, ensure_ascii=False), "application/json; charset=utf-8")
+        else:
+            self._send(404, "<h1>404 Not Found</h1>")
+
+    def do_POST(self):
+        path = self.path.split("?")[0]
+        length = int(self.headers.get("Content-Length", 0))
+        raw = self.rfile.read(length) if length else b""
+
+        if path == "/api/submit":
+            try:
+                payload = json.loads(raw.decode("utf-8"))
+                dim_id = payload.get("dimensionId", "")
+                text = (payload.get("text") or "").strip()
+                group = (payload.get("groupName") or "").strip()
+                if dim_id not in DIM_BY_ID or not text:
+                    self._send(400, json.dumps({"ok": False, "error": "invalid"}), "application/json")
+                    return
+                item = {
+                    "id": uuid.uuid4().hex[:10],
+                    "dimensionId": dim_id,
+                    "groupName": group[:100],
+                    "text": text[:1000],
+                    "ts": int(time.time() * 1000),
+                }
+                with LOCK:
+                    items = load_submissions()
+                    items.append(item)
+                    save_submissions(items)
+                self._send(200, json.dumps({"ok": True}), "application/json; charset=utf-8")
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                self._send(400, json.dumps({"ok": False, "error": "bad_json"}), "application/json")
+        elif path == "/api/clear":
+            with LOCK:
+                save_submissions([])
+            self._send(200, json.dumps({"ok": True}), "application/json; charset=utf-8")
+        else:
+            self._send(404, "Not Found")
+
+
+def main():
+    port = 8000
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            pass
+
+    server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    ips = get_local_ips()
+
+    print("=" * 56)
+    print(" 花蓮高中 NPDL 工作坊．現場分享牆伺服器已啟動")
+    print("=" * 56)
+    print()
+    print(" 請確認所有裝置都連到「同一個 Wi-Fi」，再開啟下列網址：")
+    print()
+    for ip in ips:
+        print("   老師提交分享： http://%s:%d/" % (ip, port))
+    print()
+    for ip in ips:
+        print("   投影分享牆　： http://%s:%d/wall" % (ip, port))
+    print()
+    print(" 按 Ctrl+C 可停止伺服器。資料會儲存在：")
+    print("   %s" % DATA_FILE)
+    print("=" * 56)
+
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\n伺服器已停止。")
+
+
+if __name__ == "__main__":
+    main()

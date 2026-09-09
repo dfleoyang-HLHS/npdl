@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>花蓮高中 x NPDL 深度學習</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: {
+            50: '#eef2fb',
+            100: '#d7e0f5',
+            600: '#2547a3',
+            700: '#1E3A8A',
+            800: '#152a63',
+            900: '#0f1e47'
+          },
+          leaf: {
+            500: '#16a34a',
+            600: '#15803d'
+          },
+          amber: {
+            400: '#fb923c',
+            500: '#f97316'
+          }
+        },
+        fontFamily: {
+          sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', sans-serif; }
+  .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 35px -10px rgba(30,58,138,0.35); }
+  .fade-up { animation: fadeUp 0.8s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- Header / Navigation -->
+<header id="top" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="#top" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-navy-800 transition-colors">花</div>
+        <div class="leading-tight">
+          <p class="font-bold text-navy-700 text-base sm:text-lg">花蓮高中</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 tracking-wide">NPDL 深度學習</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <a href="#vision" class="nav-link hover:text-navy-700 transition-colors">學校願景</a>
+        <a href="#six-c" class="nav-link hover:text-navy-700 transition-colors">六力對接 6C</a>
+        <a href="#practice" class="nav-link hover:text-navy-700 transition-colors">學習四要素(4E)</a>
+        <a href="npdl-rubric.html" class="hover:text-navy-700 transition-colors">教師規準工具</a>
+        <a href="school-status-workshop.html" class="hover:text-navy-700 transition-colors">現況規準工作坊</a>
+        <a href="#contact" class="nav-link hover:text-navy-700 transition-colors">聯絡我們</a>
+      </nav>
+
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg text-navy-700 hover:bg-navy-50" aria-label="開啟選單">
+        <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="iconClose" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 bg-white">
+    <div class="px-4 py-3 flex flex-col gap-1 text-sm font-medium text-slate-600">
+      <a href="#vision" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">學校願景</a>
+      <a href="#six-c" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">六力對接 6C</a>
+      <a href="#practice" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">學習四要素(4E)</a>
+      <a href="npdl-rubric.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">教師規準工具</a>
+      <a href="school-status-workshop.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">現況規準工作坊</a>
+      <a href="#contact" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">聯絡我們</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Banner -->
+<section class="relative pt-32 pb-24 sm:pt-40 sm:pb-32 overflow-hidden bg-gradient-to-br from-navy-800 via-navy-700 to-navy-900">
+  <div class="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
+    <svg class="w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <circle cx="120" cy="80" r="140" fill="#ffffff"/>
+      <circle cx="700" cy="480" r="200" fill="#fb923c"/>
+      <circle cx="650" cy="60" r="90" fill="#16a34a"/>
+    </svg>
+  </div>
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="fade-up inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-6">NEW PEDAGOGIES FOR DEEP LEARNING</p>
+    <h1 class="fade-up text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+      花蓮高中 <span class="text-amber-400">x</span> NPDL 深度學習
+    </h1>
+    <p class="fade-up text-lg sm:text-2xl text-navy-50 font-medium mb-3">人文關懷・科學思維・國際視野</p>
+    <p class="fade-up text-sm sm:text-base text-navy-100/80 max-w-2xl mx-auto mb-10">
+      接軌全球教育趨勢，融合新教學法（New Pedagogies for Deep Learning）與花中學生圖像六力，
+      培養面向未來的深度學習者。
+    </p>
+    <a href="#six-c" class="fade-up inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-900/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
+      探索六力對接 6C
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- 核心理念區塊：3 大願景 -->
+<section id="vision" class="py-20 sm:py-28 bg-white scroll-mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">SCHOOL VISION</p>
+      <h2 class="text-2xl sm:text-4xl font-black text-navy-700 mb-4">學校願景・三大核心理念</h2>
+      <p class="text-slate-500 text-sm sm:text-base">花蓮高中以「人文關懷、科學思維、國際視野」為核心願景，作為深度學習課程設計的根本依據。</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <div class="card-hover bg-slate-50 rounded-2xl p-8 shadow-md border border-slate-100">
+        <div class="w-14 h-14 rounded-xl bg-navy-700 text-white flex items-center justify-center mb-6 text-2xl">🤝</div>
+        <h3 class="text-lg sm:text-xl font-bold text-navy-700 mb-3">人文關懷</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">以同理心與社會責任為本，關懷在地文化與多元群體，培養具備人文素養的公民。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-8 shadow-md border border-slate-100">
+        <div class="w-14 h-14 rounded-xl bg-leaf-500 text-white flex items-center justify-center mb-6 text-2xl">🔬</div>
+        <h3 class="text-lg sm:text-xl font-bold text-navy-700 mb-3">科學思維</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">強調邏輯推理、實證探究與問題解決能力，奠定跨領域科學素養的基礎。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-8 shadow-md border border-slate-100">
+        <div class="w-14 h-14 rounded-xl bg-amber-500 text-white flex items-center justify-center mb-6 text-2xl">🌏</div>
+        <h3 class="text-lg sm:text-xl font-bold text-navy-700 mb-3">國際視野</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">連結全球議題與跨文化交流，培養學生具備國際移動力與全球公民意識。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 學生圖像與 6C 對接區塊 -->
+<section id="six-c" class="py-20 sm:py-28 bg-slate-50 scroll-mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">STUDENT PROFILE x NPDL 6Cs</p>
+      <h2 class="text-2xl sm:text-4xl font-black text-navy-700 mb-4">學生圖像六力・對接 NPDL 6C</h2>
+      <p class="text-slate-500 text-sm sm:text-base">花中學生圖像「六力」與 NPDL 全球深度學習能力（6C）緊密呼應，作為課程設計與學習評量的共同語言。</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-xl font-bold">溝</div>
+          <div>
+            <h3 class="font-bold text-navy-700">溝通力</h3>
+            <p class="text-xs text-slate-400 font-medium">Communication</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">培養清晰表達、傾聽與跨情境對話能力，能有效與他人分享想法並建立共識。</p>
+      </div>
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-leaf-500/10 text-leaf-600 flex items-center justify-center text-xl font-bold">品</div>
+          <div>
+            <h3 class="font-bold text-navy-700">品格力</h3>
+            <p class="text-xs text-slate-400 font-medium">Character</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">建立正直、韌性與自主學習態度，展現負責任的品格與堅持不懈的精神。</p>
+      </div>
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl font-bold">思</div>
+          <div>
+            <h3 class="font-bold text-navy-700">思辨力</h3>
+            <p class="text-xs text-slate-400 font-medium">Critical Thinking</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">訓練邏輯分析、質疑與評估證據的能力，做出審慎且有根據的判斷。</p>
+      </div>
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-navy-100 text-navy-700 flex items-center justify-center text-xl font-bold">創</div>
+          <div>
+            <h3 class="font-bold text-navy-700">創造力</h3>
+            <p class="text-xs text-slate-400 font-medium">Creativity</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">鼓勵發想新意、跨域整合與冒險嘗試，將創意轉化為具體且有價值的成果。</p>
+      </div>
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-leaf-500/10 text-leaf-600 flex items-center justify-center text-xl font-bold">學</div>
+          <div>
+            <h3 class="font-bold text-navy-700">協作力(學習力)</h3>
+            <p class="text-xs text-slate-400 font-medium">Collaboration</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">透過團隊合作與人際互動，在共學歷程中發展相互依存、共同解決問題的能力。</p>
+      </div>
+
+      <div class="card-hover bg-white rounded-2xl p-7 shadow-md border border-slate-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl font-bold">實</div>
+          <div>
+            <h3 class="font-bold text-navy-700">公民素養(實踐力)</h3>
+            <p class="text-xs text-slate-400 font-medium">Citizenship</p>
+          </div>
+        </div>
+        <p class="text-slate-500 text-sm leading-relaxed">將所學落實於真實情境與公共議題，展現全球公民意識與社會參與行動力。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 學習四要素(4E) -->
+<section id="practice" class="py-20 sm:py-28 bg-white scroll-mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">DEEP LEARNING IN ACTION</p>
+      <h2 class="text-2xl sm:text-4xl font-black text-navy-700 mb-4">學習四要素(4E)</h2>
+      <p class="text-slate-500 text-sm sm:text-base">花蓮高中將 NPDL 四大要素融入跨領域課程設計，讓深度學習真實發生於課堂之中。</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+      <div class="flex gap-5 p-6 rounded-2xl bg-navy-50 border border-navy-100">
+        <div class="shrink-0 w-11 h-11 rounded-full bg-navy-700 text-white flex items-center justify-center font-bold">1</div>
+        <div>
+          <h3 class="font-bold text-navy-700 mb-2">學習夥伴關係</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">師生共同設計學習任務，學生由知識接受者轉為學習的共同創造者。</p>
+        </div>
+      </div>
+      <div class="flex gap-5 p-6 rounded-2xl bg-navy-50 border border-navy-100">
+        <div class="shrink-0 w-11 h-11 rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold">2</div>
+        <div>
+          <h3 class="font-bold text-navy-700 mb-2">真實學習情境</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">連結在地花蓮議題與國際脈絡，設計具真實意義的探究任務。</p>
+        </div>
+      </div>
+      <div class="flex gap-5 p-6 rounded-2xl bg-navy-50 border border-navy-100">
+        <div class="shrink-0 w-11 h-11 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold">3</div>
+        <div>
+          <h3 class="font-bold text-navy-700 mb-2">數位運用</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">善用數位工具支援協作、探究與成果發表，擴展學習的深度與廣度。</p>
+        </div>
+      </div>
+      <div class="flex gap-5 p-6 rounded-2xl bg-navy-50 border border-navy-100">
+        <div class="shrink-0 w-11 h-11 rounded-full bg-navy-700 text-white flex items-center justify-center font-bold">4</div>
+        <div>
+          <h3 class="font-bold text-navy-700 mb-2">教學實踐</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">以 6C 能力為指標，透過歷程檔案與實作成果進行多元評量。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 rounded-2xl bg-gradient-to-r from-navy-700 to-navy-800 p-8 sm:p-10 text-center shadow-lg">
+      <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">給老師的規準互動工具</h3>
+      <p class="text-navy-100/80 text-sm sm:text-base max-w-xl mx-auto mb-6">透過 NPDL 6Cs 深度學習進程規準，逐一檢視六力的四個發展階段，並以反思提示語引導您思考課程設計的下一步。</p>
+      <a href="npdl-rubric.html" class="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm shadow-lg transition-all hover:-translate-y-0.5">
+        前往教師規準工具
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="contact" class="bg-navy-900 text-navy-100 pt-16 pb-8 scroll-mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 pb-10 border-b border-white/10">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">花</div>
+          <p class="font-bold text-white">花蓮高中</p>
+        </div>
+        <p class="text-sm text-navy-200/80 leading-relaxed">National Hualien Senior High School<br>人文關懷・科學思維・國際視野</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-4 text-sm tracking-wide">聯絡我們</h4>
+        <ul class="text-sm text-navy-200/80 space-y-2">
+          <li>📍 花蓮縣花蓮市林森路9號</li>
+          <li>📞 (03) 822-3862</li>
+          <li>✉️ service@mail.hlsh.hlc.edu.tw</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-4 text-sm tracking-wide">快速連結</h4>
+        <ul class="text-sm text-navy-200/80 space-y-2">
+          <li><a href="#vision" class="nav-link hover:text-amber-400 transition-colors">學校願景</a></li>
+          <li><a href="#six-c" class="nav-link hover:text-amber-400 transition-colors">六力對接 6C</a></li>
+          <li><a href="#practice" class="nav-link hover:text-amber-400 transition-colors">學習四要素(4E)</a></li>
+          <li><a href="npdl-rubric.html" class="hover:text-amber-400 transition-colors">教師規準工具</a></li>
+          <li><a href="school-status-workshop.html" class="hover:text-amber-400 transition-colors">現況規準工作坊</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="text-center text-xs text-navy-300/60 pt-6">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconOpen = document.getElementById('iconOpen');
+  const iconClose = document.getElementById('iconClose');
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          iconOpen.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

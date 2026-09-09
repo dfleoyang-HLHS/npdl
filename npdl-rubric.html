@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度學習規準・教師反思引導｜花蓮高中 NPDL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: {
+            50: '#eef2fb',
+            100: '#d7e0f5',
+            600: '#2547a3',
+            700: '#1E3A8A',
+            800: '#152a63',
+            900: '#0f1e47'
+          },
+          leaf: {
+            500: '#16a34a',
+            600: '#15803d'
+          },
+          amber: {
+            400: '#fb923c',
+            500: '#f97316'
+          }
+        },
+        fontFamily: {
+          sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', sans-serif; }
+  .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 35px -10px rgba(30,58,138,0.35); }
+  .fade-up { animation: fadeUp 0.8s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tab-btn.active { color: #fff; box-shadow: 0 10px 20px -8px rgba(30,58,138,0.5); }
+  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .accordion-item.open .accordion-panel { max-height: 600px; }
+  .accordion-item.open .chevron { transform: rotate(180deg); }
+  .chevron { transition: transform 0.3s ease; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- Header / Navigation -->
+<header id="top" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-navy-800 transition-colors">花</div>
+        <div class="leading-tight">
+          <p class="font-bold text-navy-700 text-base sm:text-lg">花蓮高中</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 tracking-wide">教師規準工具</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-navy-700 transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          回首頁
+        </a>
+        <a href="#howto" class="nav-link hover:text-navy-700 transition-colors">使用說明</a>
+        <a href="#rubric" class="nav-link hover:text-navy-700 transition-colors">六力規準</a>
+        <a href="#reflect" class="nav-link hover:text-navy-700 transition-colors">反思筆記</a>
+      </nav>
+
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg text-navy-700 hover:bg-navy-50" aria-label="開啟選單">
+        <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="iconClose" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 bg-white">
+    <div class="px-4 py-3 flex flex-col gap-1 text-sm font-medium text-slate-600">
+      <a href="index.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">← 回首頁</a>
+      <a href="#howto" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">使用說明</a>
+      <a href="#rubric" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">六力規準</a>
+      <a href="#reflect" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">反思筆記</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden bg-gradient-to-br from-navy-800 via-navy-700 to-navy-900">
+  <div class="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
+    <svg class="w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <circle cx="120" cy="80" r="140" fill="#ffffff"/>
+      <circle cx="700" cy="480" r="200" fill="#fb923c"/>
+      <circle cx="650" cy="60" r="90" fill="#16a34a"/>
+    </svg>
+  </div>
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="fade-up inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-6">FOR TEACHERS · DEEP LEARNING PROGRESSIONS</p>
+    <h1 class="fade-up text-3xl sm:text-5xl font-black text-white leading-tight mb-6">深度學習規準・教學反思引導</h1>
+    <p class="fade-up text-sm sm:text-lg text-navy-100/80 max-w-2xl mx-auto mb-10">
+      這不是一份評分表。透過 NPDL 6Cs 深度學習進程規準，逐步檢視六力各自的四個發展階段，
+      搭配反思提示語，陪伴老師重新看見自己的課程設計。
+    </p>
+    <a href="#rubric" class="fade-up inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-900/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
+      開始探索規準
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- 使用說明 -->
+<section id="howto" class="py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">HOW TO USE</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">如何使用這份規準</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-navy-700 text-white flex items-center justify-center font-bold mb-4">1</div>
+        <h3 class="font-bold text-navy-700 mb-2">選擇一項能力</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">從六力中選一個您最想檢視的面向開始。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold mb-4">2</div>
+        <h3 class="font-bold text-navy-700 mb-2">展開四個階段</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">點擊各階段卡片，閱讀課室樣貌描述，不必對號入座。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-amber-500 text-white flex items-center justify-center font-bold mb-4">3</div>
+        <h3 class="font-bold text-navy-700 mb-2">回應反思提示語</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">讓提示語啟發思考，並可在下方筆記區寫下您的想法。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 六力規準主體 -->
+<section id="rubric" class="py-16 sm:py-20 bg-slate-50 scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">6Cs LEARNING PROGRESSIONS</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">六力深度學習進程規準</h2>
+      <p class="text-slate-500 text-sm sm:text-base">每項能力都有萌發、發展、加速、進階四個階段，呈現課室可能的樣貌，供您對照與反思。</p>
+    </div>
+
+    <!-- Tabs -->
+    <div id="tabBar" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10"></div>
+
+    <!-- Progress indicator -->
+    <div class="flex items-center justify-between max-w-2xl mx-auto mb-6 px-2">
+      <div class="flex-1 flex items-center">
+        <span class="text-xs font-bold text-slate-400">萌發</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+        <span class="text-xs font-bold text-slate-400">發展</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+        <span class="text-xs font-bold text-slate-400">加速</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+        <span class="text-xs font-bold text-slate-400">進階</span>
+      </div>
+    </div>
+
+    <!-- Accordion -->
+    <div id="accordionWrap" class="space-y-4 max-w-3xl mx-auto"></div>
+  </div>
+</section>
+
+<!-- 反思筆記 -->
+<section id="reflect" class="py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">MY REFLECTION</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">我的反思筆記</h2>
+      <p class="text-slate-500 text-sm sm:text-base">寫下您對目前選取能力（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）的想法，內容僅儲存在您目前使用的瀏覽器中。</p>
+    </div>
+    <div class="bg-slate-50 rounded-2xl p-6 sm:p-8 shadow-md border border-slate-100">
+      <textarea id="noteArea" rows="6" placeholder="例如：我發現目前的課程設計，學生大多還在……接下來我想嘗試……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
+      <div class="flex items-center justify-between mt-4">
+        <p id="saveStatus" class="text-xs text-slate-400">尚未輸入</p>
+        <button id="clearNote" class="text-xs font-bold text-slate-400 hover:text-amber-500 transition-colors">清空這則筆記</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-navy-900 text-navy-100 pt-12 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-white/10">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">花</div>
+        <p class="font-bold text-white">花蓮高中 <span class="text-navy-200 font-normal">｜ 回首頁</span></p>
+      </a>
+      <p class="text-sm text-navy-200/80">深度學習規準・教學反思引導</p>
+    </div>
+    <p class="text-center text-xs text-navy-300/60 pt-6">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // ---------- Data ----------
+  const DATA = [
+    {
+      id: 'communication',
+      name: '溝通力',
+      en: 'Communication',
+      abbr: '溝',
+      color: 'navy',
+      stages: [
+        { name: '萌發', desc: '課堂溝通以教師講述為主，學生多為被動聆聽者，回應多集中在簡答與是非題。', prompt: '在您的課堂中，學生主動表達想法的比例大約有多少？' },
+        { name: '發展', desc: '教師開始設計小組討論、口頭報告等活動，學生練習清楚表達個人想法，但溝通對象多侷限於教室內。', prompt: '學生的表達機會，是否讓不同程度的學生都能參與？' },
+        { name: '加速', desc: '學生能針對不同對象（同儕、老師、校外人士）調整表達方式，並運用多元媒介進行溝通與回饋。', prompt: '您的課程是否安排學生對「真實聽眾」發表成果？' },
+        { name: '進階', desc: '學生能主動發起跨班、跨校甚至跨國的對話與協作，運用溝通影響他人觀點或促成行動。', prompt: '學生的溝通成果，是否曾經真正影響過某個決策或行動？' }
+      ]
+    },
+    {
+      id: 'character',
+      name: '品格力',
+      en: 'Character',
+      abbr: '品',
+      color: 'leaf',
+      stages: [
+        { name: '萌發', desc: '品格教育多以規範與獎懲為主，學生依循教師訂定的規則行事。', prompt: '您的課堂規範，主要來自教師制定還是師生共同討論？' },
+        { name: '發展', desc: '學生開始練習自我管理與負責任的學習態度，能在教師引導下反思自己的行為。', prompt: '學生是否有機會為自己的學習選擇與後果負責？' },
+        { name: '加速', desc: '學生在面對挑戰與挫折時展現堅持與韌性，並能主動關懷同儕與環境。', prompt: '當學習任務遇到困難時，您的課程如何支持學生堅持下去？' },
+        { name: '進階', desc: '學生的品格展現於長期且具社會影響力的行動，如自主發起公益或倡議計畫。', prompt: '學生是否曾因課程啟發，主動投入需要長期堅持的行動？' }
+      ]
+    },
+    {
+      id: 'critical',
+      name: '思辨力',
+      en: 'Critical Thinking',
+      abbr: '思',
+      color: 'amber',
+      stages: [
+        { name: '萌發', desc: '學生主要記憶與複述課本內容，較少評估資訊的正確性或觀點。', prompt: '您的提問中，有多少比例要求學生「評估」而非「回憶」？' },
+        { name: '發展', desc: '學生開始學習分析資料、比較不同觀點，並在教師引導下提出簡單論證。', prompt: '學生是否練習過為自己的觀點找證據？' },
+        { name: '加速', desc: '學生能獨立評估多元資訊來源的可信度，統整跨領域知識解決複雜問題。', prompt: '您的課程是否呈現「沒有標準答案」的真實問題？' },
+        { name: '進階', desc: '學生能發展原創的分析架構或解決方案，並用以評估、預測或改善真實情境。', prompt: '學生提出的方案，是否曾被實際採用或測試？' }
+      ]
+    },
+    {
+      id: 'creativity',
+      name: '創造力',
+      en: 'Creativity',
+      abbr: '創',
+      color: 'navy',
+      stages: [
+        { name: '萌發', desc: '創作任務多有固定範本，學生依樣完成作業，較少發揮個人想法。', prompt: '您的作業設計，留給學生多少「自由發揮」的空間？' },
+        { name: '發展', desc: '學生開始在既有框架內嘗試不同做法，教師鼓勵多元答案。', prompt: '當學生給出「非預期」的答案時，您如何回應？' },
+        { name: '加速', desc: '學生能主動產生新穎點子，並透過反覆試驗與修正完成具個人風格的作品。', prompt: '您的課程是否留有讓學生「失敗後重來」的時間與空間？' },
+        { name: '進階', desc: '學生的創作具備原創性與價值，能回應真實需求並產生新的解決方案或產品。', prompt: '學生的創作成果，是否解決了一個真實存在的問題？' }
+      ]
+    },
+    {
+      id: 'collaboration',
+      name: '協作力(學習力)',
+      en: 'Collaboration',
+      abbr: '學',
+      color: 'leaf',
+      stages: [
+        { name: '萌發', desc: '分組多為座位安排，學生各自完成分內工作，缺乏真正的互賴合作。', prompt: '小組任務中，是否每個人都「必須依賴」彼此才能完成？' },
+        { name: '發展', desc: '學生開始練習分工、傾聽與協調意見，逐漸建立團隊默契。', prompt: '小組發生意見不合時，學生如何處理？' },
+        { name: '加速', desc: '學生能在異質團隊中發揮個人專長，共同承擔成果責任並互相支持。', prompt: '您如何確保小組中每個角色都不可或缺？' },
+        { name: '進階', desc: '學生能跨團隊、跨領域甚至跨校協作，共同完成具規模與影響力的任務。', prompt: '學生是否曾與教室以外的夥伴共同完成一項任務？' }
+      ]
+    },
+    {
+      id: 'citizenship',
+      name: '公民素養(實踐力)',
+      en: 'Citizenship',
+      abbr: '實',
+      color: 'amber',
+      stages: [
+        { name: '萌發', desc: '課程內容與生活情境連結較少，學生較少意識到學習與社會議題的關聯。', prompt: '您的課程內容，與花蓮在地或全球議題有何連結？' },
+        { name: '發展', desc: '學生開始認識社會與環境議題，並能表達個人觀點與關懷。', prompt: '學生是否曾就一項議題表達自己的立場？' },
+        { name: '加速', desc: '學生能運用所學參與真實議題的探究，提出具體且可行的行動方案。', prompt: '學生提出的行動方案，是否考慮了可行性與影響對象？' },
+        { name: '進階', desc: '學生實際採取行動回應在地或全球議題，展現公民實踐與社會責任。', prompt: '學生的行動，是否為所處社群或環境帶來實際改變？' }
+      ]
+    }
+  ];
+
+  const colorMap = {
+    navy:  { bg: 'bg-navy-700',  bgSoft: 'bg-navy-100',        text: 'text-navy-700',  ring: 'ring-navy-700' },
+    leaf:  { bg: 'bg-leaf-500',  bgSoft: 'bg-leaf-500/10',     text: 'text-leaf-600',  ring: 'ring-leaf-500' },
+    amber: { bg: 'bg-amber-500', bgSoft: 'bg-amber-500/10',    text: 'text-amber-500', ring: 'ring-amber-500' }
+  };
+
+  let activeId = DATA[0].id;
+  let openStageIndex = 0;
+
+  const tabBar = document.getElementById('tabBar');
+  const accordionWrap = document.getElementById('accordionWrap');
+  const reflectCName = document.getElementById('reflectCName');
+  const noteArea = document.getElementById('noteArea');
+  const saveStatus = document.getElementById('saveStatus');
+  const clearNoteBtn = document.getElementById('clearNote');
+
+  function renderTabs() {
+    tabBar.innerHTML = DATA.map(c => {
+      const cm = colorMap[c.color];
+      const isActive = c.id === activeId;
+      return `<button data-id="${c.id}" class="tab-btn ${isActive ? 'active ' + cm.bg : 'bg-white ' + cm.text} px-4 sm:px-5 py-2.5 rounded-full text-sm font-bold border border-slate-200 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full ${isActive ? 'bg-white/20' : cm.bgSoft} flex items-center justify-center text-xs">${c.abbr}</span>
+        ${c.name}
+      </button>`;
+    }).join('');
+
+    tabBar.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeId = btn.dataset.id;
+        openStageIndex = 0;
+        renderTabs();
+        renderAccordion();
+        loadNote();
+      });
+    });
+  }
+
+  function renderAccordion() {
+    const c = DATA.find(x => x.id === activeId);
+    const cm = colorMap[c.color];
+    reflectCName.textContent = c.name;
+
+    accordionWrap.innerHTML = c.stages.map((s, i) => {
+      const isOpen = i === openStageIndex;
+      return `<div class="accordion-item ${isOpen ? 'open' : ''} bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden" data-index="${i}">
+        <button class="acc-header w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left">
+          <div class="flex items-center gap-4">
+            <span class="shrink-0 w-9 h-9 rounded-full ${cm.bgSoft} ${cm.text} flex items-center justify-center font-bold text-sm">${i + 1}</span>
+            <div>
+              <p class="font-bold text-navy-700">${s.name}</p>
+              <p class="text-xs text-slate-400">${c.en} · Stage ${i + 1}</p>
+            </div>
+          </div>
+          <svg class="chevron w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="accordion-panel px-5 sm:px-6">
+          <div class="pb-6">
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">${s.desc}</p>
+            <div class="flex gap-3 ${cm.bgSoft} rounded-xl p-4">
+              <span class="text-lg">💭</span>
+              <p class="text-sm ${cm.text} font-medium leading-relaxed">${s.prompt}</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    accordionWrap.querySelectorAll('.acc-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.accordion-item');
+        const idx = Number(item.dataset.index);
+        openStageIndex = openStageIndex === idx ? -1 : idx;
+        renderAccordion();
+      });
+    });
+  }
+
+  // ---------- Notes (localStorage) ----------
+  function noteKey() { return 'npdl-note-' + activeId; }
+
+  function loadNote() {
+    try {
+      const saved = localStorage.getItem(noteKey());
+      noteArea.value = saved || '';
+      saveStatus.textContent = saved ? '已自動儲存於此瀏覽器' : '尚未輸入';
+    } catch (e) {
+      noteArea.value = '';
+      saveStatus.textContent = '此瀏覽器不支援本機儲存';
+    }
+  }
+
+  let saveTimer = null;
+  noteArea.addEventListener('input', () => {
+    saveStatus.textContent = '輸入中…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(noteKey(), noteArea.value);
+        saveStatus.textContent = '已自動儲存於此瀏覽器';
+      } catch (e) {
+        saveStatus.textContent = '儲存失敗（此瀏覽器不支援本機儲存）';
+      }
+    }, 500);
+  });
+
+  clearNoteBtn.addEventListener('click', () => {
+    noteArea.value = '';
+    try {
+      localStorage.removeItem(noteKey());
+    } catch (e) {}
+    saveStatus.textContent = '尚未輸入';
+  });
+
+  renderTabs();
+  renderAccordion();
+  loadNote();
+
+  // ---------- Header nav ----------
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconOpen = document.getElementById('iconOpen');
+  const iconClose = document.getElementById('iconClose');
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          iconOpen.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
