@@ -259,7 +259,11 @@
 
     <div class="no-print flex flex-wrap items-center justify-between gap-3 mt-8">
       <p id="saveStatus" class="text-xs text-slate-400">尚未輸入</p>
-      <div class="flex gap-3">
+      <div class="flex flex-wrap gap-3">
+        <button id="submitWallBtn2" type="button" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs sm:text-sm shadow-lg transition-all">
+          送出到現場分享牆
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
         <button id="printBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy-700 hover:bg-navy-800 text-white font-bold text-xs sm:text-sm transition-colors">
           🖨 列印本頁紀錄
         </button>
@@ -268,6 +272,7 @@
         </button>
       </div>
     </div>
+    <p id="wallStatus2" class="no-print text-xs text-slate-400 text-right mt-2"></p>
 
     <p class="no-print text-center text-xs text-slate-400 mt-10">資料來源：Quinn, J., &amp; McEachen, J.（2017）。表 8.2 學校現況評量規準；操作指引 3.4 了解學校現況評量規準。New Pedagogies for Deep Learning™（NPDL）。</p>
   </div>
@@ -545,16 +550,29 @@
 
   // ---------- Submit to live wall ----------
   const wallStatus = document.getElementById('wallStatus');
-  document.getElementById('submitWallBtn').addEventListener('click', async () => {
+  const wallStatus2 = document.getElementById('wallStatus2');
+
+  function setWallStatus(text, tone) {
+    const toneClass = {
+      neutral: 'text-slate-400',
+      warn: 'text-amber-500 font-bold',
+      ok: 'text-leaf-600 font-bold',
+      err: 'text-red-500 font-bold'
+    }[tone || 'neutral'];
+    wallStatus.textContent = text;
+    wallStatus.className = `text-xs text-center mt-3 ${toneClass}`;
+    wallStatus2.textContent = text;
+    wallStatus2.className = `no-print text-xs text-right mt-2 ${toneClass}`;
+  }
+
+  async function submitToWall() {
     if (!groupNo.value) {
-      wallStatus.textContent = '請先選擇組別。';
-      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      setWallStatus('請先選擇組別。', 'warn');
       return;
     }
     const base = serverUrl.value.trim().replace(/\/+$/, '');
     if (!base) {
-      wallStatus.textContent = '請先填寫現場分享牆網址（由主持人現場公告）。';
-      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      setWallStatus('請先填寫現場分享牆網址（由主持人現場公告）。', 'warn');
       return;
     }
 
@@ -568,13 +586,11 @@
       .filter(d => d.text);
 
     if (!toSend.length) {
-      wallStatus.textContent = '目前五個向度都還沒有記錄想法，寫一些之後再送出吧。';
-      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      setWallStatus('目前五個向度都還沒有記錄想法，寫一些之後再送出吧。', 'warn');
       return;
     }
 
-    wallStatus.textContent = '送出中…';
-    wallStatus.className = 'text-xs text-slate-400 text-center mt-3';
+    setWallStatus('送出中…', 'neutral');
 
     let okCount = 0;
     for (const item of toSend) {
@@ -589,16 +605,16 @@
     }
 
     if (okCount === toSend.length) {
-      wallStatus.textContent = `已送出 ${okCount} 則向度想法到分享牆！🎉`;
-      wallStatus.className = 'text-xs text-leaf-600 text-center mt-3 font-bold';
+      setWallStatus(`已送出 ${okCount} 則向度想法到分享牆！🎉`, 'ok');
     } else if (okCount > 0) {
-      wallStatus.textContent = `送出 ${okCount}／${toSend.length} 則成功，其餘失敗，請確認網址與 Wi-Fi 後再試一次。`;
-      wallStatus.className = 'text-xs text-amber-500 text-center mt-3 font-bold';
+      setWallStatus(`送出 ${okCount}／${toSend.length} 則成功，其餘失敗，請確認網址與 Wi-Fi 後再試一次。`, 'warn');
     } else {
-      wallStatus.textContent = '送出失敗，請確認分享牆網址是否正確、是否連上同一個 Wi-Fi。';
-      wallStatus.className = 'text-xs text-red-500 text-center mt-3 font-bold';
+      setWallStatus('送出失敗，請確認分享牆網址是否正確、是否連上同一個 Wi-Fi。', 'err');
     }
-  });
+  }
+
+  document.getElementById('submitWallBtn').addEventListener('click', submitToWall);
+  document.getElementById('submitWallBtn2').addEventListener('click', submitToWall);
 
   // ---------- Summary ----------
   function renderSummary() {
