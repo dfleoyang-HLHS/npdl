@@ -82,6 +82,9 @@
         <a href="#intro" class="nav-link hover:text-navy-700 transition-colors">工作坊說明</a>
         <a href="#cards" class="nav-link hover:text-navy-700 transition-colors">規準卡片</a>
         <a href="#summary" class="nav-link hover:text-navy-700 transition-colors">統整紀錄</a>
+        <a id="wallNavLink" href="wall.html" class="hover:text-navy-700 transition-colors flex items-center gap-1">
+          🗂 分享牆
+        </a>
       </nav>
 
       <button id="menuBtn" class="md:hidden p-2 rounded-lg text-navy-700 hover:bg-navy-50" aria-label="開啟選單">
@@ -102,6 +105,7 @@
       <a href="#intro" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">工作坊說明</a>
       <a href="#cards" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">規準卡片</a>
       <a href="#summary" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">統整紀錄</a>
+      <a id="wallNavLinkMobile" href="wall.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">🗂 分享牆</a>
     </div>
   </div>
 </header>
@@ -570,6 +574,14 @@
     btn2.classList.add('opacity-40', 'cursor-not-allowed');
     btn2.classList.remove('hover:bg-amber-400');
     document.getElementById('httpsNotice2').hidden = false;
+  }
+
+  // 這個頁面同時被本機伺服器（/workshop）與 GitHub Pages（school-status-workshop.html）提供，
+  // 分享牆連結要對應正確的網址：本機是 /wall，線上版是 wall.html。
+  if (location.pathname === '/workshop') {
+    const wallHref = '/wall';
+    document.getElementById('wallNavLink').href = wallHref;
+    document.getElementById('wallNavLinkMobile').href = wallHref;
   }
 
   function updatePartnerDisplay() {

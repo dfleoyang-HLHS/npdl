@@ -318,6 +318,7 @@ WALL_HTML = """<!DOCTYPE html>
   <header>
     <h1>🗂 現場分享牆</h1>
     <div class="meta">
+      <a href="/workshop" style="color:#fff; text-decoration:none; font-size:0.85rem; font-weight:700;">📝 前往規準卡片與送出</a>
       <div id="count">共 0 則分享</div>
       <div id="updated">尚未更新</div>
       <div id="ghSyncStatus">GitHub：尚未同步</div>
