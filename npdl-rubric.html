@@ -11,21 +11,11 @@
       extend: {
         colors: {
           navy: {
-            50: '#eef2fb',
-            100: '#d7e0f5',
-            600: '#2547a3',
-            700: '#1E3A8A',
-            800: '#152a63',
-            900: '#0f1e47'
+            50: '#eef2fb', 100: '#d7e0f5', 200: '#b7c6ea',
+            600: '#2547a3', 700: '#1E3A8A', 800: '#152a63', 900: '#0f1e47'
           },
-          leaf: {
-            500: '#16a34a',
-            600: '#15803d'
-          },
-          amber: {
-            400: '#fb923c',
-            500: '#f97316'
-          }
+          leaf: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#16a34a', 600: '#15803d' },
+          amber: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fb923c', 500: '#f97316' }
         },
         fontFamily: {
           sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
@@ -47,9 +37,9 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .tab-btn.active { color: #fff; box-shadow: 0 10px 20px -8px rgba(30,58,138,0.5); }
-  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-  .accordion-item.open .accordion-panel { max-height: 600px; }
-  .accordion-item.open .chevron { transform: rotate(180deg); }
+  .sub-panel { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+  .sub-item.open .sub-panel { max-height: 1400px; }
+  .sub-item.open .chevron { transform: rotate(180deg); }
   .chevron { transition: transform 0.3s ease; }
 </style>
 </head>
@@ -112,8 +102,8 @@
     <p class="fade-up inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-6">FOR TEACHERS · DEEP LEARNING PROGRESSIONS</p>
     <h1 class="fade-up text-3xl sm:text-5xl font-black text-white leading-tight mb-6">深度學習規準・教學反思引導</h1>
     <p class="fade-up text-sm sm:text-lg text-navy-100/80 max-w-2xl mx-auto mb-10">
-      這不是一份評分表。透過 NPDL 6Cs 深度學習進程規準，逐步檢視六力各自的四個發展階段，
-      搭配反思提示語，陪伴老師重新看見自己的課程設計。
+      這不是一份評分表。透過六力各自的子向度與五個發展階段，
+      陪伴老師逐步檢視課堂樣貌，重新看見自己的課程設計。
     </p>
     <a href="#rubric" class="fade-up inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-900/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
       開始探索規準
@@ -137,8 +127,8 @@
       </div>
       <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
         <div class="w-11 h-11 mx-auto rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold mb-4">2</div>
-        <h3 class="font-bold text-navy-700 mb-2">展開四個階段</h3>
-        <p class="text-slate-500 text-sm leading-relaxed">點擊各階段卡片，閱讀課室樣貌描述，不必對號入座。</p>
+        <h3 class="font-bold text-navy-700 mb-2">展開子向度看五階段</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">每項能力有 4-5 個子向度，各自呈現五個發展階段的課堂樣貌，不必對號入座。</p>
       </div>
       <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
         <div class="w-11 h-11 mx-auto rounded-full bg-amber-500 text-white flex items-center justify-center font-bold mb-4">3</div>
@@ -155,27 +145,29 @@
     <div class="text-center max-w-2xl mx-auto mb-12">
       <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">6Cs LEARNING PROGRESSIONS</p>
       <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">六力深度學習進程規準</h2>
-      <p class="text-slate-500 text-sm sm:text-base">每項能力都有萌發、發展、加速、進階四個階段，呈現課室可能的樣貌，供您對照與反思。</p>
+      <p class="text-slate-500 text-sm sm:text-base">每項能力都有 4-5 個子向度，各自呈現「證據有限、萌芽、發展、加速、精熟」五個階段的課堂樣貌，供您對照與反思。</p>
     </div>
 
     <!-- Tabs -->
-    <div id="tabBar" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10"></div>
+    <div id="tabBar" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6"></div>
 
     <!-- Progress indicator -->
-    <div class="flex items-center justify-between max-w-2xl mx-auto mb-6 px-2">
+    <div class="flex items-center justify-between max-w-2xl mx-auto mb-10 px-2">
       <div class="flex-1 flex items-center">
-        <span class="text-xs font-bold text-slate-400">萌發</span>
-        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
-        <span class="text-xs font-bold text-slate-400">發展</span>
-        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
-        <span class="text-xs font-bold text-slate-400">加速</span>
-        <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
-        <span class="text-xs font-bold text-slate-400">進階</span>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">證據有限</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">萌芽</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">發展</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">加速</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">精熟</span>
       </div>
     </div>
 
-    <!-- Accordion -->
-    <div id="accordionWrap" class="space-y-4 max-w-3xl mx-auto"></div>
+    <!-- Subdimension accordion -->
+    <div id="subWrap" class="space-y-4 max-w-4xl mx-auto"></div>
   </div>
 </section>
 
@@ -185,7 +177,7 @@
     <div class="text-center mb-10">
       <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">MY REFLECTION</p>
       <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">我的反思筆記</h2>
-      <p class="text-slate-500 text-sm sm:text-base">寫下您對目前選取能力（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）的想法，內容僅儲存在您目前使用的瀏覽器中。</p>
+      <p class="text-slate-500 text-sm sm:text-base">寫下您對目前選取能力（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）任一子向度的想法，內容僅儲存在您目前使用的瀏覽器中。</p>
     </div>
     <div class="bg-slate-50 rounded-2xl p-6 sm:p-8 shadow-md border border-slate-100">
       <textarea id="noteArea" rows="6" placeholder="例如：我發現目前的課程設計，學生大多還在……接下來我想嘗試……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
@@ -207,104 +199,386 @@
       </a>
       <p class="text-sm text-navy-200/80">深度學習規準・教學反思引導</p>
     </div>
-    <p class="text-center text-xs text-navy-300/60 pt-6">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+    <p class="text-center text-xs text-navy-300/60 pt-6">內容架構參考 New Pedagogies for Deep Learning™（NPDL）全球核心素養架構，由花蓮高中改寫為教學反思用語。</p>
+    <p class="text-center text-xs text-navy-300/60 pt-2">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
   </div>
 </footer>
 
 <script>
   // ---------- Data ----------
+  const STAGE_LABELS = ['證據有限', '萌芽', '發展', '加速', '精熟'];
+
   const DATA = [
     {
-      id: 'communication',
-      name: '溝通力',
-      en: 'Communication',
-      abbr: '溝',
-      color: 'navy',
-      stages: [
-        { name: '萌發', desc: '課堂溝通以教師講述為主，學生多為被動聆聽者，回應多集中在簡答與是非題。', prompt: '在您的課堂中，學生主動表達想法的比例大約有多少？' },
-        { name: '發展', desc: '教師開始設計小組討論、口頭報告等活動，學生練習清楚表達個人想法，但溝通對象多侷限於教室內。', prompt: '學生的表達機會，是否讓不同程度的學生都能參與？' },
-        { name: '加速', desc: '學生能針對不同對象（同儕、老師、校外人士）調整表達方式，並運用多元媒介進行溝通與回饋。', prompt: '您的課程是否安排學生對「真實聽眾」發表成果？' },
-        { name: '進階', desc: '學生能主動發起跨班、跨校甚至跨國的對話與協作，運用溝通影響他人觀點或促成行動。', prompt: '學生的溝通成果，是否曾經真正影響過某個決策或行動？' }
+      id: 'communication', name: '溝通力', en: 'Communication', abbr: '溝', color: 'navy',
+      subdims: [
+        {
+          name: '溝通設計能考量受眾與情境',
+          prompt: '您的課程是否讓學生練習針對不同對象（同儕、師長、校外人士）調整表達方式？',
+          stages: [
+            '學生的表達方式單一，很少考慮聽眾是誰、在什麼場合。',
+            '在提示下，學生開始嘗試依情境選擇書面或口頭等不同表達形式。',
+            '學生能主動依溝通情境調整用詞與呈現方式，但選擇還不夠熟練。',
+            '學生能分析不同對象的需求，靈活挑選最合適的方式傳達訊息。',
+            '學生能精準判斷時機與方式，讓每種溝通場合都發揮最大效果。'
+          ]
+        },
+        {
+          name: '訊息清晰且能產生影響力',
+          prompt: '學生的表達，除了讓人聽懂，是否也能引發思考或促成行動？',
+          stages: [
+            '學生表達的內容含糊，尚未留意語氣、用詞等技巧的重要性。',
+            '學生開始留意用詞的一致性，但還無法運用技巧引發共鳴。',
+            '學生的訊息具一致性，能運用基本溝通技巧，但說服力有限。',
+            '學生能靈活運用語言、語調、時機等技巧，讓訊息更具說服力。',
+            '學生的溝通細膩且具說服力，足以引發他人思考或行動。'
+          ]
+        },
+        {
+          name: '藉由反思持續精進溝通',
+          prompt: '學生是否有固定機會，透過他人回饋來檢視並調整自己的表達方式？',
+          stages: [
+            '學生只在被要求時，才願意請他人給予回饋。',
+            '學生能依教師提供的規準請人回饋，並開始反思自己的表達。',
+            '學生能主動請人給意見，並嘗試監控、調整自己的溝通方式。',
+            '學生持續透過回饋循環修正內容，也能理解多元觀點。',
+            '學生主動反思並精煉溝通內容，確保訊息如預期被理解。'
+          ]
+        },
+        {
+          name: '意見表達展現身分認同與人文關懷',
+          prompt: '課堂討論中，不同背景學生的聲音，是否都有機會被真正聽見？',
+          stages: [
+            '學生較難察覺自己的意見與其背景、經驗之間的關聯。',
+            '學生開始探索自己的經驗與價值觀如何影響自己的想法。',
+            '學生能在溝通中逐漸納入多元意見與身分認同的觀點。',
+            '學生的表達能真誠納入不同背景的聲音，展現同理與包容。',
+            '學生的溝通能真實傳達自我，也能為被忽略的觀點發聲。'
+          ]
+        },
+        {
+          name: '善用數位工具溝通',
+          prompt: '除了口頭報告，學生有沒有機會用數位工具面向真實受眾發表？',
+          stages: [
+            '學生較少用數位工具溝通，效果有限。',
+            '學生開始嘗試用數位工具傳達訊息，但效果尚不穩定。',
+            '學生能有效使用數位工具，改善溝通的效率與品質。',
+            '學生能依受眾需求選用合適的數位平台促進溝通。',
+            '學生能靈活運用多種數位工具，提升溝通的深度與廣度。'
+          ]
+        }
       ]
     },
     {
-      id: 'character',
-      name: '品格力',
-      en: 'Character',
-      abbr: '品',
-      color: 'leaf',
-      stages: [
-        { name: '萌發', desc: '品格教育多以規範與獎懲為主，學生依循教師訂定的規則行事。', prompt: '您的課堂規範，主要來自教師制定還是師生共同討論？' },
-        { name: '發展', desc: '學生開始練習自我管理與負責任的學習態度，能在教師引導下反思自己的行為。', prompt: '學生是否有機會為自己的學習選擇與後果負責？' },
-        { name: '加速', desc: '學生在面對挑戰與挫折時展現堅持與韌性，並能主動關懷同儕與環境。', prompt: '當學習任務遇到困難時，您的課程如何支持學生堅持下去？' },
-        { name: '進階', desc: '學生的品格展現於長期且具社會影響力的行動，如自主發起公益或倡議計畫。', prompt: '學生是否曾因課程啟發，主動投入需要長期堅持的行動？' }
+      id: 'character', name: '品格力', en: 'Character', abbr: '品', color: 'leaf',
+      subdims: [
+        {
+          name: '對學習與人生抱持積極態度',
+          prompt: '您的課堂規範與學習任務，主要來自教師制定，還是師生共同討論？',
+          stages: [
+            '學生依賴教師給予明確指示，才願意投入學習。',
+            '在引導下，學生開始練習規劃學習、做選擇。',
+            '學生能自訂學習任務、監控進度並嘗試反思成效。',
+            '學生展現高度自我覺察，能主動掌握自己的學習。',
+            '學生能自主規劃學習機會，並運用回饋持續成長。'
+          ]
+        },
+        {
+          name: '具備勇氣、堅持與復原力',
+          prompt: '當學習任務遇到困難時，您的課程如何支持學生堅持下去？',
+          stages: [
+            '學生一遇到挑戰或負面回饋，容易想放棄。',
+            '學生開始展現一些勇氣，但遇到較大挫折仍容易失去動力。',
+            '學生能用自己的方式處理挫折，但仍需要他人的支持。',
+            '學生面對困難時能自我調整，堅持面對挑戰。',
+            '學生具備高度韌性，能在挑戰中支持自己也支持他人。'
+          ]
+        },
+        {
+          name: '展現同理心與正直行為',
+          prompt: '當課堂上發生不公平的狀況，學生是否會主動採取行動？',
+          stages: [
+            '學生尚未意識到同理心與正直如何影響與人互動。',
+            '學生開始理解同理心對人際互動可能帶來的影響。',
+            '學生能從自身經驗出發，理解同理與正直的重要性。',
+            '學生能自我反思，努力在學習與生活中展現同理與正直。',
+            '學生展現高度同理心，即使無人注意也堅持做對的事。'
+          ]
+        },
+        {
+          name: '善用數位工具培養品格',
+          prompt: '學生使用數位工具時，是否也在練習自律、同理與負責任的態度？',
+          stages: [
+            '學生使用數位工具時，較少考慮品格層面的意義。',
+            '學生開始用數位工具協助學習，並嘗試培養同理心。',
+            '學生能經常運用數位工具，促進學習與品格發展。',
+            '學生能清楚說明數位工具如何增進自己的學習品格。',
+            '學生能選擇合適的工具，支持自己與他人發展同理心與勇氣。'
+          ]
+        }
       ]
     },
     {
-      id: 'critical',
-      name: '思辨力',
-      en: 'Critical Thinking',
-      abbr: '思',
-      color: 'amber',
-      stages: [
-        { name: '萌發', desc: '學生主要記憶與複述課本內容，較少評估資訊的正確性或觀點。', prompt: '您的提問中，有多少比例要求學生「評估」而非「回憶」？' },
-        { name: '發展', desc: '學生開始學習分析資料、比較不同觀點，並在教師引導下提出簡單論證。', prompt: '學生是否練習過為自己的觀點找證據？' },
-        { name: '加速', desc: '學生能獨立評估多元資訊來源的可信度，統整跨領域知識解決複雜問題。', prompt: '您的課程是否呈現「沒有標準答案」的真實問題？' },
-        { name: '進階', desc: '學生能發展原創的分析架構或解決方案，並用以評估、預測或改善真實情境。', prompt: '學生提出的方案，是否曾被實際採用或測試？' }
+      id: 'critical', name: '思辨力', en: 'Critical Thinking', abbr: '思', color: 'amber',
+      subdims: [
+        {
+          name: '能評估資訊與論點',
+          prompt: '您的提問中，有多少比例要求學生「評估」而非單純「回憶」？',
+          stages: [
+            '學生能找到資訊，但難以判斷論證中的漏洞。',
+            '學生開始學習用有效的方法蒐集資訊、評估假設。',
+            '學生能取得並初步評估資訊的可信度與關聯性。',
+            '學生能判斷資訊是否有用、可信，並解釋其中的原理。',
+            '學生能純熟運用邏輯評估論證，清楚指出優缺點。'
+          ]
+        },
+        {
+          name: '能建立連結、辨認模式',
+          prompt: '您的課程是否刻意安排學生看見不同領域知識之間的關聯？',
+          stages: [
+            '學生只能辨識相對簡單、直接呈現的模式。',
+            '學生開始練習查找、探索資訊，理解學科間的關聯。',
+            '學生能說明重要概念間的關聯，並嘗試建立跨領域連結。',
+            '學生能清楚說明模式與連結的重要性，尤其是跨學科的部分。',
+            '學生擅長預測與分析模式，能從多元來源建立深度理解。'
+          ]
+        },
+        {
+          name: '能建構有意義的知識',
+          prompt: '學生完成任務後，能不能用自己的話重新整理、建構出新的理解？',
+          stages: [
+            '學生能整理資訊並用自己的話重述，但難以深入分析。',
+            '學生能透過探究他人觀點與經驗，建構初步的新知識。',
+            '學生能找到路徑、活用知識，但多半一次只處理一個學科。',
+            '學生能清楚說明如何運用新舊知識建構有用的知識。',
+            '學生具備跨學科、多元視角的知識建構能力，展現深刻的實踐思維。'
+          ]
+        },
+        {
+          name: '能在真實情境中實驗與行動',
+          prompt: '您的課程是否呈現「沒有標準答案」的真實問題，讓學生試著解決？',
+          stages: [
+            '學生較難將所學遷移到真實情境中。',
+            '在教師支持下，學生開始嘗試將所學應用到真實世界。',
+            '學生能針對新情境調整、延伸所學知識並加以應用。',
+            '學生能清楚說明將知識應用至新情境的重要性，並實際嘗試。',
+            '學生能在日常中創新且實用地應用所學，並持續反思調整。'
+          ]
+        },
+        {
+          name: '善用數位工具支持思辨',
+          prompt: '學生是否曾用數位工具蒐集、比對多方資訊，形成自己的判斷？',
+          stages: [
+            '學生尚未運用數位工具來產出問題或建立連結。',
+            '學生開始運用數位工具建立連結，發展基本思辨技能。',
+            '學生能運用數位工具產出問題、發展共同思考的模式。',
+            '學生能有效運用數位工具探索跨學科主題、深化思辨技巧。',
+            '學生能運用數位工具橫跨多元情境，辨識模式並說明其如何增進思辨。'
+          ]
+        }
       ]
     },
     {
-      id: 'creativity',
-      name: '創造力',
-      en: 'Creativity',
-      abbr: '創',
-      color: 'navy',
-      stages: [
-        { name: '萌發', desc: '創作任務多有固定範本，學生依樣完成作業，較少發揮個人想法。', prompt: '您的作業設計，留給學生多少「自由發揮」的空間？' },
-        { name: '發展', desc: '學生開始在既有框架內嘗試不同做法，教師鼓勵多元答案。', prompt: '當學生給出「非預期」的答案時，您如何回應？' },
-        { name: '加速', desc: '學生能主動產生新穎點子，並透過反覆試驗與修正完成具個人風格的作品。', prompt: '您的課程是否留有讓學生「失敗後重來」的時間與空間？' },
-        { name: '進階', desc: '學生的創作具備原創性與價值，能回應真實需求並產生新的解決方案或產品。', prompt: '學生的創作成果，是否解決了一個真實存在的問題？' }
+      id: 'creativity', name: '創造力', en: 'Creativity', abbr: '創', color: 'navy',
+      subdims: [
+        {
+          name: '具備創業家精神',
+          prompt: '您的課程是否鼓勵學生主動發現生活中可以被改善或創造價值的機會？',
+          stages: [
+            '學生尚未能察覺可以創造價值或滿足需求的機會。',
+            '在引導下，學生開始培養辨識時機的敏銳度。',
+            '學生透過實踐培養辨識機會的能力，並嘗試提出解方。',
+            '學生對於提出可行、有價值的解決方案具備強烈動機。',
+            '學生已發展出實施變革的能力，能著手解決真實世界的問題。'
+          ]
+        },
+        {
+          name: '能提出優質的探究問題',
+          prompt: '您的探究任務，是老師直接給問題，還是學生有機會自己提問？',
+          stages: [
+            '學生對於如何提出能激發深度探索的問題感到困難。',
+            '學生開始發展提問技巧，需要教師協助共同建構問題。',
+            '學生具備辨識真實議題和問題的技巧，能組織探究歷程。',
+            '學生已能建立探究技巧，並持續尋求更深入的理解。',
+            '學生能自行選擇並界定複雜的疑問與好奇點，引發更多提問。'
+          ]
+        },
+        {
+          name: '力求提出新穎的想法與解方',
+          prompt: '當學生給出「非預期」的答案時，您通常如何回應？',
+          stages: [
+            '學生的想法多停留在既有的解方，較少測試新的可行性。',
+            '學生開始運用有限的思考與創意策略，產出新想法。',
+            '學生能透過嘗試與評估不同可能性，挑戰自己原本的習慣想法。',
+            '學生能展現出質疑現狀的想法，熟練運用多元的思考與創意策略。',
+            '學生是敏銳的觀察者，能辨識新穎的想法與真實問題的解決方案。'
+          ]
+        },
+        {
+          name: '具備將想法化為行動的領導力',
+          prompt: '學生的創意成果，是否曾經真正被實際採用或落實過？',
+          stages: [
+            '學生不太具備能凝聚他人以實現願景的技巧與自信。',
+            '學生開始發展一些領導技能，並能擔負部分學習任務。',
+            '學生開始發展以行動為導向的領導技能，知道如何協調不同角色。',
+            '學生具備強大的行動領導技能與樂觀進取的態度，能給予他人回饋。',
+            '學生擅長挑戰現狀，能引導他人一起創造深刻的改變。'
+          ]
+        },
+        {
+          name: '善用數位工具支持創造',
+          prompt: '您的課程是否留給學生用數位工具反覆試驗、修正創作的空間？',
+          stages: [
+            '學生在創意發想或發表成果時，較少使用數位工具。',
+            '學生開始使用數位工具來蒐集、認識創意的想法。',
+            '學生能用有創意的方式，有效使用數位工具創作新作品。',
+            '學生能以嶄新的方式使用數位工具，設計、辨識並解決挑戰。',
+            '學生能選擇並使用適切的數位平台、工具及科技，發揮想法的最大可能性。'
+          ]
+        }
       ]
     },
     {
-      id: 'collaboration',
-      name: '協作力(學習力)',
-      en: 'Collaboration',
-      abbr: '學',
-      color: 'leaf',
-      stages: [
-        { name: '萌發', desc: '分組多為座位安排，學生各自完成分內工作，缺乏真正的互賴合作。', prompt: '小組任務中，是否每個人都「必須依賴」彼此才能完成？' },
-        { name: '發展', desc: '學生開始練習分工、傾聽與協調意見，逐漸建立團隊默契。', prompt: '小組發生意見不合時，學生如何處理？' },
-        { name: '加速', desc: '學生能在異質團隊中發揮個人專長，共同承擔成果責任並互相支持。', prompt: '您如何確保小組中每個角色都不可或缺？' },
-        { name: '進階', desc: '學生能跨團隊、跨領域甚至跨校協作，共同完成具規模與影響力的任務。', prompt: '學生是否曾與教室以外的夥伴共同完成一項任務？' }
+      id: 'collaboration', name: '協作力(學習力)', en: 'Collaboration', abbr: '學', color: 'leaf',
+      subdims: [
+        {
+          name: '以相互依存的方式進行團隊合作',
+          prompt: '小組任務中，是否每個人都「必須依賴」彼此才能完成？',
+          stages: [
+            '學生多半各自進行任務，稱不上是真正的團隊合作。',
+            '學生開始一起做一些決定，但重要決策仍由少數人主導。',
+            '學生一起決定任務分配，依成員專長分工，事後一起檢視成果。',
+            '學生能清楚說明與同儕合作時，如何善用每個人的優勢。',
+            '學生展現高度效能，充分融合每位成員的優勢與觀點，做出最佳決策。'
+          ]
+        },
+        {
+          name: '具備人際關係與團隊合作技巧',
+          prompt: '小組發生意見不合時，學生通常怎麼處理？',
+          stages: [
+            '學生執行任務時或許能互相幫忙，但還沒展現真正的合作技巧。',
+            '學生開始表現出對團隊工作的共同責任，逐漸建立關係。',
+            '學生展現出人際互動技巧，主動分擔對工作的共同責任。',
+            '學生能清楚說出團隊工作、作品或成果產出的共同責任。',
+            '學生積極承擔責任，確保協作過程發揮最佳效果。'
+          ]
+        },
+        {
+          name: '具備社交、情緒與跨文化覺察',
+          prompt: '學生是否有機會覺察並理解，跟自己觀點不同的同儕在想什麼？',
+          stages: [
+            '學生對自己有基本的覺察，但傾向只從自己的視角檢視問題。',
+            '學生開始了解自我，知道自己的位置及行為如何影響他人。',
+            '學生的覺察和傾聽技巧逐漸提升，更能理解和同理他人的感受。',
+            '學生能察覺自己的視角從何而來，也理解他人視角的不同之處。',
+            '學生具備成熟的社會與情緒覺察，展現清楚的自我及文化認同。'
+          ]
+        },
+        {
+          name: '管理團隊動能並因應挑戰',
+          prompt: '您如何確保小組中每個角色都不可或缺，而不是有人在打混？',
+          stages: [
+            '學生容易陷入自己的觀點中，難以真正傾聽他人。',
+            '學生仍需要引導，才能建立和維持正向的工作關係。',
+            '學生通常能在團隊中有效工作，儘管遇到壓力仍需要協助。',
+            '學生擅長分辨自己與他人的觀點，能判斷何時該表達、何時該退讓。',
+            '學生能深刻理解自我與他人觀點，以清晰而有勇氣的方式表達與傾聽。'
+          ]
+        },
+        {
+          name: '善用數位工具支持協作',
+          prompt: '學生是否曾用數位工具跟教室以外的夥伴一起完成任務？',
+          stages: [
+            '學生能使用一些數位工具來產生連結和協作。',
+            '學生能使用數位工具促進團隊的工作與合作學習。',
+            '學生能有效使用數位工具，建立相互依存的關係並理解他人觀點。',
+            '學生能清楚表達數位工具如何深化協作、建立共同責任感。',
+            '學生能選擇並使用合適的數位平台、工具及科技，豐富自己和他人的學習。'
+          ]
+        }
       ]
     },
     {
-      id: 'citizenship',
-      name: '公民素養(實踐力)',
-      en: 'Citizenship',
-      abbr: '實',
-      color: 'amber',
-      stages: [
-        { name: '萌發', desc: '課程內容與生活情境連結較少，學生較少意識到學習與社會議題的關聯。', prompt: '您的課程內容，與花蓮在地或全球議題有何連結？' },
-        { name: '發展', desc: '學生開始認識社會與環境議題，並能表達個人觀點與關懷。', prompt: '學生是否曾就一項議題表達自己的立場？' },
-        { name: '加速', desc: '學生能運用所學參與真實議題的探究，提出具體且可行的行動方案。', prompt: '學生提出的行動方案，是否考慮了可行性與影響對象？' },
-        { name: '進階', desc: '學生實際採取行動回應在地或全球議題，展現公民實踐與社會責任。', prompt: '學生的行動，是否為所處社群或環境帶來實際改變？' }
+      id: 'citizenship', name: '公民素養(實踐力)', en: 'Citizenship', abbr: '實', color: 'amber',
+      subdims: [
+        {
+          name: '具有全球視野',
+          prompt: '您的課程內容，與花蓮在地或全球議題有何連結？',
+          stages: [
+            '學生對世界較不關心，對不需立即面對的議題缺乏興趣或理解。',
+            '學生開始對在地或全球議題進行探索或產生興趣。',
+            '學生展現出對在地與全球議題的基本理解。',
+            '不論個人或團隊，學生回應全球議題時都能積極投入思考並採取行動。',
+            '學生能以全球公民的身分思考並採取行動。'
+          ]
+        },
+        {
+          name: '以同理心關注多元價值與人類福祉',
+          prompt: '學生是否曾練習從跟自己不同的文化或立場，重新理解一個議題？',
+          stages: [
+            '學生對理解不同文化的觀點與世界觀感到困難。',
+            '學生開始表現出對自己身分與文化的意識，理解一些文化間的差異。',
+            '學生正在發展個人與文化的身分認同，也知道這會影響看待世界的方式。',
+            '立基於對自身與他人文化的理解，學生能對不同世界觀保持開放與好奇。',
+            '學生能善用對自身和他人文化的理解，採取行動以消弭不平等。'
+          ]
+        },
+        {
+          name: '對人類與環境永續抱持真誠關注',
+          prompt: '學生是否曾就一項環境或社會議題，具體表達自己的立場？',
+          stages: [
+            '學生對環境議題的意識和關注相當缺乏。',
+            '學生開始認知到，每個人的行為都會對環境產生影響。',
+            '學生能感受和理解在地與全球的永續，對整體人類和環境的重要性。',
+            '學生能提出促成環境永續的方案，並說明這些方案如何影響地球與居民。',
+            '學生能就人類與環境議題，展現令人信服且具行動力的觀點。'
+          ]
+        },
+        {
+          name: '致力解決複雜的真實世界問題',
+          prompt: '學生提出的行動方案，是否考慮了可行性與實際影響的對象？',
+          stages: [
+            '學生面對真實世界的挑戰和問題時，安心感較低、較為卻步。',
+            '學生面對開放性、真實世界的問題時，開始展現出些微熟悉感。',
+            '學生對開放性、沒有標準答案的真實問題逐漸產生興趣。',
+            '學生熱切地想多加學習，並能討論影響在地和全球的真實挑戰。',
+            '學生能實際著手處理困難的真實世界挑戰及問題。'
+          ]
+        },
+        {
+          name: '善用數位工具實踐公民素養',
+          prompt: '學生的行動方案，是否曾透過數位工具真正對外連結、產生影響？',
+          stages: [
+            '學生尚未學會使用數位工具來探索全球議題或提出問題。',
+            '學生開始使用數位工具來理解社區或在地議題。',
+            '學生能有效使用數位工具，擴大與在地及全球的連結。',
+            '學生能用數位工具建立連結，產出關注公平正義與環境永續的方案。',
+            '學生能選擇並使用合適的數位平台、工具及科技，深化並豐富自己的觀點。'
+          ]
+        }
       ]
     }
   ];
 
   const colorMap = {
-    navy:  { bg: 'bg-navy-700',  bgSoft: 'bg-navy-100',        text: 'text-navy-700',  ring: 'ring-navy-700' },
-    leaf:  { bg: 'bg-leaf-500',  bgSoft: 'bg-leaf-500/10',     text: 'text-leaf-600',  ring: 'ring-leaf-500' },
-    amber: { bg: 'bg-amber-500', bgSoft: 'bg-amber-500/10',    text: 'text-amber-500', ring: 'ring-amber-500' }
+    navy:  { bg: 'bg-navy-700',  bgSoft: 'bg-navy-100',    text: 'text-navy-700' },
+    leaf:  { bg: 'bg-leaf-500',  bgSoft: 'bg-leaf-100',    text: 'text-leaf-600' },
+    amber: { bg: 'bg-amber-500', bgSoft: 'bg-amber-100',   text: 'text-amber-500' }
   };
 
+  const STAGE_STYLE = [
+    { chip: 'bg-slate-100 text-slate-500',  body: 'bg-slate-50 border-slate-200 text-slate-600' },
+    { chip: 'bg-navy-50 text-navy-700',     body: 'bg-navy-50/60 border-navy-100 text-slate-700' },
+    { chip: 'bg-navy-100 text-navy-800',    body: 'bg-navy-100/50 border-navy-200 text-slate-700' },
+    { chip: 'bg-navy-700 text-white',       body: 'bg-navy-700/90 border-navy-700 text-white' },
+    { chip: 'bg-navy-900 text-white',       body: 'bg-navy-900 border-navy-900 text-white' }
+  ];
+
   let activeId = DATA[0].id;
-  let openStageIndex = 0;
+  let openIndexes = new Set([0]);
 
   const tabBar = document.getElementById('tabBar');
-  const accordionWrap = document.getElementById('accordionWrap');
+  const subWrap = document.getElementById('subWrap');
   const reflectCName = document.getElementById('reflectCName');
   const noteArea = document.getElementById('noteArea');
   const saveStatus = document.getElementById('saveStatus');
@@ -314,7 +588,7 @@
     tabBar.innerHTML = DATA.map(c => {
       const cm = colorMap[c.color];
       const isActive = c.id === activeId;
-      return `<button data-id="${c.id}" class="tab-btn ${isActive ? 'active ' + cm.bg : 'bg-white ' + cm.text} px-4 sm:px-5 py-2.5 rounded-full text-sm font-bold border border-slate-200 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+      return `<button data-id="${c.id}" class="tab-btn ${isActive ? 'active ' + cm.bg : 'bg-white ' + cm.text} px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-slate-200 transition-all hover:-translate-y-0.5 flex items-center gap-2">
         <span class="w-6 h-6 rounded-full ${isActive ? 'bg-white/20' : cm.bgSoft} flex items-center justify-center text-xs">${c.abbr}</span>
         ${c.name}
       </button>`;
@@ -323,50 +597,58 @@
     tabBar.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         activeId = btn.dataset.id;
-        openStageIndex = 0;
+        openIndexes = new Set([0]);
         renderTabs();
-        renderAccordion();
+        renderSub();
         loadNote();
       });
     });
   }
 
-  function renderAccordion() {
+  function renderSub() {
     const c = DATA.find(x => x.id === activeId);
     const cm = colorMap[c.color];
     reflectCName.textContent = c.name;
 
-    accordionWrap.innerHTML = c.stages.map((s, i) => {
-      const isOpen = i === openStageIndex;
-      return `<div class="accordion-item ${isOpen ? 'open' : ''} bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden" data-index="${i}">
-        <button class="acc-header w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left">
+    subWrap.innerHTML = c.subdims.map((sd, i) => {
+      const isOpen = openIndexes.has(i);
+      return `<div class="sub-item ${isOpen ? 'open' : ''} bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden" data-index="${i}">
+        <button class="sub-header w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left">
           <div class="flex items-center gap-4">
             <span class="shrink-0 w-9 h-9 rounded-full ${cm.bgSoft} ${cm.text} flex items-center justify-center font-bold text-sm">${i + 1}</span>
             <div>
-              <p class="font-bold text-navy-700">${s.name}</p>
-              <p class="text-xs text-slate-400">${c.en} · Stage ${i + 1}</p>
+              <p class="font-bold text-navy-700">${sd.name}</p>
+              <p class="text-xs text-slate-400">${c.en} · 子向度 ${i + 1}</p>
             </div>
           </div>
           <svg class="chevron w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
-        <div class="accordion-panel px-5 sm:px-6">
+        <div class="sub-panel px-5 sm:px-6">
           <div class="pb-6">
-            <p class="text-slate-600 text-sm leading-relaxed mb-4">${s.desc}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              ${sd.stages.map((text, si) => `
+                <div class="rounded-xl border ${STAGE_STYLE[si].body} p-4">
+                  <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded-full mb-2 ${STAGE_STYLE[si].chip}">${STAGE_LABELS[si]}</span>
+                  <p class="text-xs sm:text-sm leading-relaxed">${text}</p>
+                </div>
+              `).join('')}
+            </div>
             <div class="flex gap-3 ${cm.bgSoft} rounded-xl p-4">
               <span class="text-lg">💭</span>
-              <p class="text-sm ${cm.text} font-medium leading-relaxed">${s.prompt}</p>
+              <p class="text-sm ${cm.text} font-medium leading-relaxed">${sd.prompt}</p>
             </div>
           </div>
         </div>
       </div>`;
     }).join('');
 
-    accordionWrap.querySelectorAll('.acc-header').forEach(header => {
+    subWrap.querySelectorAll('.sub-header').forEach(header => {
       header.addEventListener('click', () => {
-        const item = header.closest('.accordion-item');
+        const item = header.closest('.sub-item');
         const idx = Number(item.dataset.index);
-        openStageIndex = openStageIndex === idx ? -1 : idx;
-        renderAccordion();
+        if (openIndexes.has(idx)) openIndexes.delete(idx);
+        else openIndexes.add(idx);
+        renderSub();
       });
     });
   }
@@ -408,7 +690,7 @@
   });
 
   renderTabs();
-  renderAccordion();
+  renderSub();
   loadNote();
 
   // ---------- Header nav ----------
