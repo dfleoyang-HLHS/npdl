@@ -194,13 +194,16 @@
         <input id="partnerB" type="text" placeholder="夥伴 B" class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-600">
       </div>
 
-      <label for="serverUrl" class="text-xs font-bold text-slate-500 block mb-1.5">現場分享牆 IP 位置（主持人現場公告，例如 192.168.1.5）</label>
-      <input id="serverUrl" type="text" placeholder="192.168.1.5" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-navy-600">
+      <div id="localWallGroup1">
+        <label for="serverUrl" class="text-xs font-bold text-slate-500 block mb-1.5">現場分享牆 IP 位置（主持人現場公告，例如 192.168.1.5）</label>
+        <input id="serverUrl" type="text" placeholder="192.168.1.5" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-navy-600">
 
-      <button id="submitWallBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm shadow-lg transition-all">
-        送出到現場分享牆
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-      </button>
+        <button id="submitWallBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm shadow-lg transition-all">
+          送出到現場分享牆
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+      <p id="httpsNotice1" hidden class="text-xs text-amber-600 font-bold text-center mt-1 mb-3">⚠ 此頁面是透過 https 開啟，無法送出到本機分享牆，請改用下方「上傳到 GitHub」功能。</p>
       <p id="wallStatus" class="text-xs text-slate-400 text-center mt-3">完成規準卡片的關鍵想法後，隨時可以按上面的按鈕送出（可重複送出，晚一點想到新想法也能再送一次）。</p>
     </div>
   </div>
@@ -272,6 +275,7 @@
         </button>
       </div>
     </div>
+    <p id="httpsNotice2" hidden class="no-print text-xs text-amber-600 font-bold text-right mt-2">⚠ 此頁面是透過 https 開啟，無法送出到本機分享牆，請改用下方「上傳到 GitHub」功能。</p>
     <p id="wallStatus2" class="no-print text-xs text-slate-400 text-right mt-2"></p>
 
     <div class="no-print max-w-md mx-auto mt-10 bg-navy-50 rounded-2xl border border-navy-100 p-6 text-center">
@@ -554,6 +558,19 @@
     safeSet('workshop-serverUrl', serverUrl.value);
   }
 
+  // 透過 https 開啟（例如 GitHub Pages）時，送到本機分享牆的動作必定會被瀏覽器的 Mixed Content 機制擋下，
+  // 直接把這個功能灰掉並提示改用下方的「上傳到 GitHub」。
+  if (location.protocol === 'https:') {
+    document.getElementById('localWallGroup1').style.display = 'none';
+    document.getElementById('httpsNotice1').hidden = false;
+
+    const btn2 = document.getElementById('submitWallBtn2');
+    btn2.disabled = true;
+    btn2.classList.add('opacity-40', 'cursor-not-allowed');
+    btn2.classList.remove('hover:bg-amber-400');
+    document.getElementById('httpsNotice2').hidden = false;
+  }
+
   function updatePartnerDisplay() {
     const g = groupNo.value;
     const a = partnerA.value.trim();
@@ -593,6 +610,10 @@
   }
 
   async function submitToWall() {
+    if (location.protocol === 'https:') {
+      setWallStatus('此頁面是透過 https 開啟，無法送出到本機分享牆，請改用下方「上傳到 GitHub」功能。', 'warn');
+      return;
+    }
     if (!groupNo.value) {
       setWallStatus('請先選擇組別。', 'warn');
       return;
