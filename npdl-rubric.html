@@ -179,7 +179,7 @@
     <div class="text-center mb-10">
       <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">MY REFLECTION</p>
       <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">我的反思筆記</h2>
-      <p class="text-slate-500 text-sm sm:text-base">寫下您對目前選取能力（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）任一子向度的想法，內容僅儲存在您目前使用的瀏覽器中。</p>
+      <p class="text-slate-500 text-sm sm:text-base">寫下您對目前選取能力（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）任一子向度的想法，內容預設僅儲存在您目前使用的瀏覽器中，也可以選擇上傳分享。</p>
     </div>
     <div class="bg-slate-50 rounded-2xl p-6 sm:p-8 shadow-md border border-slate-100">
       <textarea id="noteArea" rows="6" placeholder="例如：我發現目前的課程設計，學生大多還在……接下來我想嘗試……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
@@ -187,6 +187,21 @@
         <p id="saveStatus" class="text-xs text-slate-400">尚未輸入</p>
         <button id="clearNote" class="text-xs font-bold text-slate-400 hover:text-amber-500 transition-colors">清空這則筆記</button>
       </div>
+    </div>
+
+    <div class="mt-6 bg-navy-50 rounded-2xl border border-navy-100 p-6 sm:p-8 text-center">
+      <p class="text-xs font-bold text-navy-700 tracking-wide mb-4">☁️ 想公開分享這則筆記嗎？（選填）</p>
+      <input id="nickname" type="text" placeholder="您的暱稱（選填，留空則顯示為匿名）" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-navy-600">
+      <button id="ghUploadBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm shadow-lg transition-all mb-3">
+        上傳到 GitHub 分享
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+      <input id="ghToken" type="password" placeholder="貼上 GitHub Personal Access Token" autocomplete="off" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-navy-600">
+      <label class="flex items-center justify-center gap-2 text-xs text-slate-400 mb-1">
+        <input type="checkbox" id="ghRemember"> 記住這個 Token（借用電腦請勿勾選）
+      </label>
+      <p id="ghStatus" class="text-xs text-slate-400 mt-2"></p>
+      <a href="rubric-reflections.html" class="inline-block text-xs text-navy-600 font-bold mt-3 hover:underline">查看大家分享的規準反思 →</a>
     </div>
   </div>
 </section>
@@ -689,6 +704,109 @@
       localStorage.removeItem(noteKey());
     } catch (e) {}
     saveStatus.textContent = '尚未輸入';
+  });
+
+  // ---------- Upload reflection to GitHub ----------
+  const GITHUB_CONFIG = { owner: 'dfleoyang-HLHS', repo: 'npdl', path: 'rubric_reflections.json', branch: 'main' };
+  const nicknameInput = document.getElementById('nickname');
+  const ghToken = document.getElementById('ghToken');
+  const ghRemember = document.getElementById('ghRemember');
+  const ghUploadBtn = document.getElementById('ghUploadBtn');
+  const ghStatus = document.getElementById('ghStatus');
+
+  try {
+    const savedToken = localStorage.getItem('gh-token');
+    if (savedToken) { ghToken.value = savedToken; ghRemember.checked = true; }
+    const savedNick = localStorage.getItem('rubric-nickname');
+    if (savedNick) nicknameInput.value = savedNick;
+  } catch (e) {}
+
+  function syncGhTokenStorage() {
+    try {
+      if (ghRemember.checked) localStorage.setItem('gh-token', ghToken.value);
+      else localStorage.removeItem('gh-token');
+    } catch (e) {}
+  }
+  ghRemember.addEventListener('change', syncGhTokenStorage);
+  ghToken.addEventListener('input', syncGhTokenStorage);
+  nicknameInput.addEventListener('input', () => {
+    try { localStorage.setItem('rubric-nickname', nicknameInput.value); } catch (e) {}
+  });
+
+  function setGhStatus(text, tone) {
+    const colors = { neutral: 'text-slate-400', warn: 'text-amber-500 font-bold', ok: 'text-leaf-600 font-bold', err: 'text-red-500 font-bold' };
+    ghStatus.textContent = text;
+    ghStatus.className = 'text-xs mt-2 ' + (colors[tone] || colors.neutral);
+  }
+
+  function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+  function base64ToUtf8(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
+  function makeId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  ghUploadBtn.addEventListener('click', async () => {
+    const token = ghToken.value.trim();
+    if (!token) { setGhStatus('請先在下方輸入 GitHub Token。', 'warn'); return; }
+    const text = noteArea.value.trim();
+    if (!text) { setGhStatus('請先在上方寫下您的筆記內容。', 'warn'); return; }
+
+    const c = DATA.find(x => x.id === activeId);
+    const myItem = {
+      id: makeId(),
+      source: 'teacher',
+      dimensionId: activeId,
+      dimensionName: c.name,
+      nickname: nicknameInput.value.trim(),
+      text: text,
+      ts: Date.now()
+    };
+
+    ghUploadBtn.disabled = true;
+    setGhStatus('上傳中…', 'neutral');
+
+    const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+    const authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' };
+    const maxAttempts = 4;
+
+    try {
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        let current = [];
+        let sha;
+        const getRes = await fetch(apiUrl + '?ref=' + GITHUB_CONFIG.branch, { headers: authHeaders, cache: 'no-store' });
+        if (getRes.status === 200) {
+          const info = await getRes.json();
+          sha = info.sha;
+          try { current = JSON.parse(base64ToUtf8(info.content)); } catch (e) { current = []; }
+        } else if (getRes.status !== 404) {
+          const err = await getRes.json().catch(() => ({}));
+          throw new Error('讀取現有資料失敗（' + getRes.status + '）' + (err.message ? '：' + err.message : ''));
+        }
+
+        const merged = current.concat([myItem]);
+        const content = utf8ToBase64(JSON.stringify(merged, null, 2));
+
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
+          body: JSON.stringify(Object.assign(
+            { message: '教師規準反思分享 ' + new Date().toLocaleString('zh-TW'), content: content, branch: GITHUB_CONFIG.branch },
+            sha ? { sha } : {}
+          ))
+        });
+
+        if (putRes.ok) {
+          setGhStatus('已成功分享到規準反思分享頁！🎉', 'ok');
+          return;
+        }
+        if (putRes.status === 409 && attempt < maxAttempts) continue;
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error('上傳失敗（' + putRes.status + '）' + (err.message ? '：' + err.message : '，請確認 Token 是否正確且有寫入權限。'));
+      }
+      setGhStatus('上傳失敗：太多人同時上傳，請稍後再試一次。', 'err');
+    } catch (e) {
+      setGhStatus('上傳失敗：' + e.message, 'err');
+    } finally {
+      ghUploadBtn.disabled = false;
+    }
   });
 
   renderTabs();

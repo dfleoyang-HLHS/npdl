@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>規準反思分享頁｜花蓮高中 NPDL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: { 50:'#eef2fb',100:'#d7e0f5',200:'#b7c6ea',600:'#2547a3',700:'#1E3A8A',800:'#152a63',900:'#0f1e47' },
+          leaf: { 50:'#f0fdf4',100:'#dcfce7',500:'#16a34a',600:'#15803d' },
+          amber: { 50:'#fffbeb',100:'#fef3c7',400:'#fb923c',500:'#f97316' }
+        },
+        fontFamily: { sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', sans-serif; }
+  .note { animation: pop .3s ease both; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<header class="bg-white/90 backdrop-blur shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-navy-800 transition-colors">花</div>
+        <div class="leading-tight">
+          <p class="font-bold text-navy-700 text-base sm:text-lg">花蓮高中</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 tracking-wide">規準反思分享頁</p>
+        </div>
+      </a>
+      <div class="flex items-center gap-4 sm:gap-5 text-xs sm:text-sm font-medium text-slate-600">
+        <a href="npdl-rubric.html" class="hover:text-navy-700 transition-colors">教師規準工具</a>
+        <a href="npdl-rubric-student.html" class="hover:text-navy-700 transition-colors">學生版規準</a>
+        <a href="index.html" class="hover:text-navy-700 transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          回首頁
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="py-10 sm:py-14 bg-gradient-to-br from-navy-800 via-navy-700 to-navy-900 text-center px-4">
+  <p class="inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-4">SHARED REFLECTIONS</p>
+  <h1 class="text-2xl sm:text-4xl font-black text-white mb-3">💭 規準反思分享頁</h1>
+  <p class="text-navy-100/80 text-sm max-w-xl mx-auto">
+    這裡彙整老師與學生在「教師規準工具」「學生版規準」中，選擇公開分享的反思筆記。
+    內容由使用者自行選擇上傳，不是即時同步，畫面每 20 秒會自動重新整理一次。
+  </p>
+  <p id="updated" class="text-navy-200/70 text-xs mt-4">尚未載入資料</p>
+  <div class="flex items-center justify-center gap-3 mt-4">
+    <button id="refreshBtn" type="button" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      立即重新整理
+    </button>
+    <div class="inline-flex items-center rounded-full bg-white/10 p-1 text-xs font-bold">
+      <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-full text-white">全部</button>
+      <button data-filter="teacher" class="filter-btn px-3 py-1.5 rounded-full text-navy-100/70">教師</button>
+      <button data-filter="student" class="filter-btn px-3 py-1.5 rounded-full text-navy-100/70">學生</button>
+    </div>
+  </div>
+</section>
+
+<section class="py-10 sm:py-14">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="board" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+  </div>
+</section>
+
+<footer class="bg-navy-900 text-navy-100 pt-12 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-white/10">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">花</div>
+        <p class="font-bold text-white">花蓮高中 <span class="text-navy-200 font-normal">｜ 回首頁</span></p>
+      </a>
+      <p class="text-sm text-navy-200/80">規準反思分享頁</p>
+    </div>
+    <p class="text-center text-xs text-navy-300/60 pt-6">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+  const DIMENSIONS = [
+    { id: 'communication', name: '溝通力', color: '#1E3A8A' },
+    { id: 'character', name: '品格力', color: '#15803d' },
+    { id: 'critical', name: '思辨力', color: '#f97316' },
+    { id: 'creativity', name: '創造力', color: '#1E3A8A' },
+    { id: 'collaboration', name: '協作力(學習力)', color: '#15803d' },
+    { id: 'citizenship', name: '公民素養(實踐力)', color: '#f97316' }
+  ];
+
+  let allItems = [];
+  let filter = 'all';
+
+  const board = document.getElementById('board');
+  const updatedEl = document.getElementById('updated');
+
+  board.innerHTML = DIMENSIONS.map(d => `
+    <div class="rounded-2xl bg-white shadow-md border border-slate-100 overflow-hidden flex flex-col">
+      <div class="px-5 py-3 flex items-center justify-between text-white font-bold" style="background:${d.color}">
+        <span>${d.name}</span>
+        <span id="n-${d.id}">0</span>
+      </div>
+      <div id="body-${d.id}" class="p-4 flex-1 space-y-3">
+        <div class="empty text-center text-slate-400 text-sm py-6">尚無分享</div>
+      </div>
+    </div>
+  `).join('');
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return d.toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderNote(it, color) {
+    const badge = it.source === 'student'
+      ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-leaf-100 text-leaf-600">學生</span>'
+      : '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-navy-100 text-navy-700">教師</span>';
+    return `<div class="note bg-slate-50 rounded-xl p-3 border-l-4" style="border-color:${color}">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-xs font-bold text-slate-500">${escapeHtml(it.nickname || '匿名')}</span>
+        ${badge}
+      </div>
+      <div class="text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(it.text)}</div>
+      <div class="text-[11px] text-slate-400 mt-1.5">${fmtTime(it.ts)}</div>
+    </div>`;
+  }
+
+  function renderBoard() {
+    const items = filter === 'all' ? allItems : allItems.filter(it => it.source === filter);
+    DIMENSIONS.forEach(d => {
+      const list = items.filter(it => it.dimensionId === d.id).sort((a,b) => b.ts - a.ts);
+      document.getElementById('n-' + d.id).textContent = list.length;
+      const bodyEl = document.getElementById('body-' + d.id);
+      bodyEl.innerHTML = list.length
+        ? list.map(it => renderNote(it, d.color)).join('')
+        : '<div class="empty text-center text-slate-400 text-sm py-6">尚無分享</div>';
+    });
+  }
+
+  async function refresh() {
+    try {
+      const res = await fetch('./rubric_reflections.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('no data yet');
+      allItems = await res.json();
+      renderBoard();
+      updatedEl.textContent = `共 ${allItems.length} 則分享．最後重新整理於 ${new Date().toLocaleTimeString('zh-TW')}`;
+    } catch (e) {
+      updatedEl.textContent = '尚未取得分享資料，使用者上傳後這裡會自動顯示。';
+    }
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('bg-white/30', b === btn);
+        b.classList.toggle('text-white', b === btn);
+        b.classList.toggle('text-navy-100/70', b !== btn);
+      });
+      renderBoard();
+    });
+  });
+  document.querySelector('.filter-btn[data-filter="all"]').classList.add('bg-white/30', 'text-white');
+
+  document.getElementById('refreshBtn').addEventListener('click', refresh);
+
+  refresh();
+  setInterval(refresh, 20000);
+</script>
+
+</body>
+</html>
