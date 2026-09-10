@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學生版深度學習進程・自我檢核｜花蓮高中 NPDL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: {
+            50: '#eef2fb', 100: '#d7e0f5', 200: '#b7c6ea',
+            600: '#2547a3', 700: '#1E3A8A', 800: '#152a63', 900: '#0f1e47'
+          },
+          leaf: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#16a34a', 600: '#15803d' },
+          amber: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fb923c', 500: '#f97316' }
+        },
+        fontFamily: {
+          sans: ['"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', sans-serif; }
+  .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 35px -10px rgba(30,58,138,0.35); }
+  .fade-up { animation: fadeUp 0.8s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tab-btn.active { color: #fff; box-shadow: 0 10px 20px -8px rgba(30,58,138,0.5); }
+  .sub-panel { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+  .sub-item.open .sub-panel { max-height: 1400px; }
+  .sub-item.open .chevron { transform: rotate(180deg); }
+  .chevron { transition: transform 0.3s ease; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- Header / Navigation -->
+<header id="top" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-full bg-leaf-500 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-leaf-600 transition-colors">花</div>
+        <div class="leading-tight">
+          <p class="font-bold text-navy-700 text-base sm:text-lg">花蓮高中</p>
+          <p class="text-[10px] sm:text-xs text-slate-500 tracking-wide">學生自我檢核工具</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-navy-700 transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          回首頁
+        </a>
+        <a href="#howto" class="nav-link hover:text-navy-700 transition-colors">使用說明</a>
+        <a href="#rubric" class="nav-link hover:text-navy-700 transition-colors">六力進程</a>
+        <a href="#reflect" class="nav-link hover:text-navy-700 transition-colors">我的筆記</a>
+        <a href="npdl-rubric.html" class="hover:text-navy-700 transition-colors">教師規準工具</a>
+      </nav>
+
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg text-navy-700 hover:bg-navy-50" aria-label="開啟選單">
+        <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="iconClose" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 bg-white">
+    <div class="px-4 py-3 flex flex-col gap-1 text-sm font-medium text-slate-600">
+      <a href="index.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">← 回首頁</a>
+      <a href="#howto" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">使用說明</a>
+      <a href="#rubric" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">六力進程</a>
+      <a href="#reflect" class="nav-link py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">我的筆記</a>
+      <a href="npdl-rubric.html" class="py-2 px-2 rounded-lg hover:bg-navy-50 hover:text-navy-700">教師規準工具</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden bg-gradient-to-br from-leaf-600 via-navy-700 to-navy-900">
+  <div class="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
+    <svg class="w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <circle cx="120" cy="80" r="140" fill="#ffffff"/>
+      <circle cx="700" cy="480" r="200" fill="#fb923c"/>
+      <circle cx="650" cy="60" r="90" fill="#16a34a"/>
+    </svg>
+  </div>
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="fade-up inline-block px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-xs sm:text-sm font-semibold tracking-widest mb-6">FOR STUDENTS · MY DEEP LEARNING JOURNEY</p>
+    <h1 class="fade-up text-3xl sm:text-5xl font-black text-white leading-tight mb-6">學生版深度學習進程・自我檢核</h1>
+    <p class="fade-up text-sm sm:text-lg text-navy-100/80 max-w-2xl mx-auto mb-10">
+      這不是一份成績單。每一句話都用「我」來描述——
+      看看現在的你比較像哪一句，也想想你希望自己接下來變成什麼樣子。
+    </p>
+    <a href="#rubric" class="fade-up inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-900/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
+      開始檢視自己
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- 使用說明 -->
+<section id="howto" class="py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">HOW TO USE</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">怎麼使用這個工具</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-navy-700 text-white flex items-center justify-center font-bold mb-4">1</div>
+        <h3 class="font-bold text-navy-700 mb-2">選一項能力</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">從六力中選一個你最想了解自己的部分開始。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-leaf-500 text-white flex items-center justify-center font-bold mb-4">2</div>
+        <h3 class="font-bold text-navy-700 mb-2">找出最像自己的那一句</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">每個子向度都有五句「我……」的描述，讀讀看哪一句最貼近現在的你。</p>
+      </div>
+      <div class="card-hover bg-slate-50 rounded-2xl p-6 shadow-md border border-slate-100 text-center">
+        <div class="w-11 h-11 mx-auto rounded-full bg-amber-500 text-white flex items-center justify-center font-bold mb-4">3</div>
+        <h3 class="font-bold text-navy-700 mb-2">寫下你的想法</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">想一想提示問題，並在下方筆記區寫下你現在的狀態和想努力的方向。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 六力規準主體 -->
+<section id="rubric" class="py-16 sm:py-20 bg-slate-50 scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">MY 6Cs LEARNING JOURNEY</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">我的六力深度學習進程</h2>
+      <p class="text-slate-500 text-sm sm:text-base">每項能力都有幾個子向度，各自用「證據有限、萌芽、發展、加速、精熟」五句話描述可能的你，找找看哪一句最像現在的自己。</p>
+    </div>
+
+    <!-- Tabs -->
+    <div id="tabBar" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6"></div>
+
+    <!-- Progress indicator -->
+    <div class="flex items-center justify-between max-w-2xl mx-auto mb-10 px-2">
+      <div class="flex-1 flex items-center">
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">證據有限</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">萌芽</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">發展</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">加速</span>
+        <div class="flex-1 h-0.5 bg-slate-200 mx-1.5"></div>
+        <span class="text-[11px] sm:text-xs font-bold text-slate-400">精熟</span>
+      </div>
+    </div>
+
+    <!-- Subdimension accordion -->
+    <div id="subWrap" class="space-y-4 max-w-4xl mx-auto"></div>
+  </div>
+</section>
+
+<!-- 我的筆記 -->
+<section id="reflect" class="py-16 sm:py-20 bg-white scroll-mt-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <p class="text-amber-500 font-bold tracking-widest text-xs sm:text-sm mb-3">MY NOTES</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-navy-700 mb-4">我的筆記</h2>
+      <p class="text-slate-500 text-sm sm:text-base">寫下你對（<span id="reflectCName" class="font-bold text-navy-700">溝通力</span>）的想法：你現在比較像哪個階段？接下來想試著做什麼？內容只會存在你自己的瀏覽器裡。</p>
+    </div>
+    <div class="bg-slate-50 rounded-2xl p-6 sm:p-8 shadow-md border border-slate-100">
+      <textarea id="noteArea" rows="6" placeholder="例如：我覺得自己在這方面大概是「發展」階段，因為……接下來我想試試看……" class="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy-600 resize-none"></textarea>
+      <div class="flex items-center justify-between mt-4">
+        <p id="saveStatus" class="text-xs text-slate-400">尚未輸入</p>
+        <button id="clearNote" class="text-xs font-bold text-slate-400 hover:text-amber-500 transition-colors">清空這則筆記</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-navy-900 text-navy-100 pt-12 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-white/10">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">花</div>
+        <p class="font-bold text-white">花蓮高中 <span class="text-navy-200 font-normal">｜ 回首頁</span></p>
+      </a>
+      <p class="text-sm text-navy-200/80">學生版深度學習進程・自我檢核</p>
+    </div>
+    <p class="text-center text-xs text-navy-300/60 pt-6">內容架構參考 New Pedagogies for Deep Learning™（NPDL）全球核心素養架構，由花蓮高中改寫為學生自我檢核用語。</p>
+    <p class="text-center text-xs text-navy-300/60 pt-2">© 2026 國立花蓮高級中學 National Hualien Senior High School. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // ---------- Data ----------
+  const STAGE_LABELS = ['證據有限', '萌芽', '發展', '加速', '精熟'];
+
+  const DATA = [
+    {
+      id: 'communication', name: '溝通力', en: 'Communication', abbr: '溝', color: 'navy',
+      subdims: [
+        {
+          name: '我的溝通設計會考量受眾與情境',
+          prompt: '想一想：你在不同場合（報告、聊天、線上留言）會不會用不同的表達方式？',
+          stages: [
+            '不管要說什麼，我通常都用同一種方式表達。',
+            '我開始學習依不同溝通方式（書面、口頭）調整我的表達。',
+            '我能依情境調整用詞和呈現方式，但選擇還不夠熟練。',
+            '我能分析不同對象的需求，挑選最合適的方式傳達訊息。',
+            '我能精準掌握時機與方式，讓每一種溝通都發揮最大效果。'
+          ]
+        },
+        {
+          name: '我的訊息清晰且能產生影響力',
+          prompt: '想一想：你說出來或寫出來的內容，能不能讓別人真的產生共鳴或行動？',
+          stages: [
+            '我表達的內容有點含糊，還沒特別留意語氣或用詞。',
+            '我開始注意用詞的一致性，但還不太能引發別人共鳴。',
+            '我的訊息具一致性，能運用一些溝通技巧，但說服力還有限。',
+            '我能靈活運用語言、語調和時機，讓我的訊息更有說服力。',
+            '我的溝通細膩又有說服力，能引發別人思考或採取行動。'
+          ]
+        },
+        {
+          name: '我藉由反思持續精進溝通',
+          prompt: '想一想：你多久會主動請同學或老師給你關於表達方式的意見？',
+          stages: [
+            '只有被要求時，我才會請別人給我回饋。',
+            '我能照老師給的規準請人回饋，並試著反思自己的表達。',
+            '我會主動請人給意見，並嘗試調整自己的溝通方式。',
+            '我持續透過回饋修正自己的內容，也能理解不同觀點。',
+            '我主動反思並精煉自己的溝通，確保訊息如我預期地被理解。'
+          ]
+        },
+        {
+          name: '我的意見表達展現身分認同與人文關懷',
+          prompt: '想一想：在表達意見時，你有沒有考慮過跟自己背景不同的人的感受？',
+          stages: [
+            '我不太確定自己的意見和我的背景、經驗有什麼關係。',
+            '我開始發現自己的經驗與價值觀，會影響我的想法。',
+            '我在溝通時，開始把不同的意見和身分認同都納入考慮。',
+            '我的表達能真誠納入不同背景的聲音，展現同理與包容。',
+            '我的溝通能真實傳達自己，也會為被忽略的意見發聲。'
+          ]
+        },
+        {
+          name: '我善用數位工具溝通',
+          prompt: '想一想：你曾經用數位工具（簡報、影片、社群貼文）跟別人溝通嗎？效果如何？',
+          stages: [
+            '我很少用數位工具溝通，效果也有限。',
+            '我開始嘗試用數位工具傳達訊息，但效果還不太穩定。',
+            '我能有效使用數位工具，讓溝通更有效率、品質更好。',
+            '我能依受眾需求選擇合適的數位平台來溝通。',
+            '我能靈活運用各種數位工具，讓溝通更有深度和廣度。'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'character', name: '品格力', en: 'Character', abbr: '品', color: 'leaf',
+      subdims: [
+        {
+          name: '我對人生與學習抱持積極態度',
+          prompt: '想一想：你現在的學習計畫，主要是老師安排，還是自己規劃的比較多？',
+          stages: [
+            '我需要老師給明確指示，才知道要學什麼、怎麼做。',
+            '在協助下，我開始練習規劃學習、做一些選擇。',
+            '我能自己安排學習任務、檢視進度並試著反思。',
+            '我對自己的學習有高度覺察，能主動掌握學習方向。',
+            '我能自己創造學習機會，並運用回饋讓自己持續成長。'
+          ]
+        },
+        {
+          name: '我具備勇氣、堅持與復原力',
+          prompt: '想一想：遇到挫折時，你通常怎麼讓自己繼續走下去？',
+          stages: [
+            '遇到挑戰或不好的回饋時，我很容易就想放棄。',
+            '我開始展現一點勇氣，但遇到大挫折還是容易失去動力。',
+            '我能用自己的方式處理挫折，但有時還是需要別人支持。',
+            '遇到困難時，我能自我調整，堅持面對挑戰。',
+            '我有很強的韌性，遇到挑戰時能支持自己也能幫助別人。'
+          ]
+        },
+        {
+          name: '我展現同理心與正直行為',
+          prompt: '想一想：你有沒有在別人沒注意到的時候，還是選擇做對的事？',
+          stages: [
+            '我還不太清楚同理心和正直會怎麼影響我跟別人的相處。',
+            '我開始理解同理心對人際互動可能帶來的影響。',
+            '我能從自己的經驗出發，理解同理和正直的重要性。',
+            '我會自我反思，努力在學習和生活中展現同理與正直。',
+            '就算沒有人在看，我也會堅持展現同理心，做對的事。'
+          ]
+        },
+        {
+          name: '我善用數位工具培養品格',
+          prompt: '想一想：你用數位工具學習時，有沒有想過它怎麼幫助你變成更好的人？',
+          stages: [
+            '我使用數位工具時，比較少想到品格方面的意義。',
+            '我開始用數位工具協助學習，也嘗試培養同理心。',
+            '我常運用數位工具，來促進自己的學習和品格發展。',
+            '我能清楚說明數位工具怎麼幫助我的學習品格。',
+            '我會挑選合適的工具，支持自己和別人發展同理心與勇氣。'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'critical', name: '思辨力', en: 'Critical Thinking', abbr: '思', color: 'amber',
+      subdims: [
+        {
+          name: '我能評估資訊與論點',
+          prompt: '想一想：你看到一則資訊時，會不會先想一想它可不可信？',
+          stages: [
+            '我找得到資訊，但很難判斷論點裡有沒有漏洞。',
+            '我開始學習用有效的方法蒐集資訊、評估假設。',
+            '我能找到資訊並初步評估它的可信度和相關性。',
+            '我能判斷資訊是否有用、可信，並解釋背後的原因。',
+            '我能純熟運用邏輯評估論點，清楚指出優缺點。'
+          ]
+        },
+        {
+          name: '我能建立連結、辨認模式',
+          prompt: '想一想：你有沒有發現過，兩個不同科目教的東西其實有關聯？',
+          stages: [
+            '我只能看出比較簡單、直接呈現出來的模式。',
+            '我開始練習查找、探索資訊，理解學科之間的關聯。',
+            '我能說明重要概念間的關聯，並試著建立跨領域連結。',
+            '我能清楚說明模式與連結的重要性，尤其是跨學科部分。',
+            '我擅長預測與分析模式，能從多元來源建立深入理解。'
+          ]
+        },
+        {
+          name: '我能建構有意義的知識',
+          prompt: '想一想：學完一個主題後，你能不能用自己的話把它講清楚？',
+          stages: [
+            '我能整理資訊並用自己的話重述，但比較難深入分析。',
+            '我能透過探究別人的觀點和經驗，建構一些新知識。',
+            '我能找到方法、活用知識，但通常一次只處理一個學科。',
+            '我能清楚說明如何運用新舊知識，建構出有用的知識。',
+            '我具備跨學科、多元視角的知識建構能力，想法有深度。'
+          ]
+        },
+        {
+          name: '我能在真實情境中實驗與行動',
+          prompt: '想一想：你學到的東西，有沒有真的用在生活中的某個情境裡？',
+          stages: [
+            '我比較難把學到的東西應用到真實情境中。',
+            '在協助下，我開始嘗試把所學應用到真實世界。',
+            '我能針對新情境調整、延伸我學到的知識並加以應用。',
+            '我能說明把知識應用到新情境的重要性，並實際嘗試。',
+            '我能在日常生活中創新且實用地應用所學，並持續調整。'
+          ]
+        },
+        {
+          name: '我善用數位工具支持思辨',
+          prompt: '想一想：你會用數位工具幫助自己想得更清楚、更深入嗎？',
+          stages: [
+            '我還沒運用數位工具來提出問題或建立連結。',
+            '我開始運用數位工具建立連結，發展基本的思辨技能。',
+            '我能運用數位工具提出問題，發展共同思考的方式。',
+            '我能有效運用數位工具探索跨學科主題，深化思辨技巧。',
+            '我能運用數位工具橫跨多元情境，辨識模式並說明如何增進思辨。'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'creativity', name: '創造力', en: 'Creativity', abbr: '創', color: 'navy',
+      subdims: [
+        {
+          name: '我具備創業家精神',
+          prompt: '想一想：你有沒有發現過生活中可以被改善或創造價值的機會？',
+          stages: [
+            '我很難注意到什麼時候有機會可以為別人創造價值。',
+            '在協助下，我開始培養辨識機會的敏銳度。',
+            '我透過實作培養辨識機會的能力，並試著想解方。',
+            '我對提出可行、有價值的解決方案，有強烈的動機。',
+            '我已經能發展出實踐改變的能力，去解決真實世界的問題。'
+          ]
+        },
+        {
+          name: '我能提出優質的探究問題',
+          prompt: '想一想：你的探究題目，是自己想出來的，還是老師給的比較多？',
+          stages: [
+            '我可能對某個主題有興趣，但不太確定怎麼展開探索。',
+            '我開始學習針對感興趣的主題，提出相關的問題。',
+            '我能辨識真實生活中的議題或挑戰，並整理出探究問題。',
+            '我能從不同角度理解議題，並提出重要問題來設計解方。',
+            '我能自己選擇並界定複雜的難題，引發更多提問和可能性。'
+          ]
+        },
+        {
+          name: '我力求提出新穎的想法與解方',
+          prompt: '想一想：遇到問題時，你是套用舊方法，還是願意嘗試新的做法？',
+          stages: [
+            '遇到挑戰時，我會直接用別人用過的方法來解決。',
+            '遇到挑戰時，我會嘗試搜尋過去沒用過的不同解方。',
+            '我能設想並創造新的解決方案，挑戰自己原本的想法。',
+            '我能思考過去的解方為何有效，並想辦法讓它變得更好。',
+            '我能跳脫框架思考，讓自己的解決方案真正改變人們的生活。'
+          ]
+        },
+        {
+          name: '我具備將想法化為行動的領導力',
+          prompt: '想一想：你的點子，有沒有真的說服別人一起把它做出來？',
+          stages: [
+            '我有想法，但還沒準備好跟別人分享或一起實現它。',
+            '我願意和別人分享我的想法，也開始承擔一些任務。',
+            '我能辨識自己和別人的優勢，知道如何凝聚大家達成目標。',
+            '我能激勵別人在共同創作過程中，主動扮演自己的角色。',
+            '身為一個領導者，我有恆心也願意跟別人分享我的積極態度。'
+          ]
+        },
+        {
+          name: '我善用數位工具支持創造',
+          prompt: '想一想：你用數位工具創作時，有沒有反覆修改、讓作品變得更好？',
+          stages: [
+            '我能運用一些科技，來產出成果或展現我的想法。',
+            '科技讓我能更有效率地辨識、探索和實踐我的想法。',
+            '我能運用科技來創新、支持並改善我的想法或成果。',
+            '我能用有創意的方式，以科技來設計、辨識並解決挑戰。',
+            '我能輕易運用科技，發展新穎有創意的想法並融入成果中。'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'collaboration', name: '協作力(學習力)', en: 'Collaboration', abbr: '學', color: 'leaf',
+      subdims: [
+        {
+          name: '我以相互依存的方式進行團隊合作',
+          prompt: '想一想：小組作業中，是不是每個人都「一定要」互相配合才能完成？',
+          stages: [
+            '處理團隊任務時，我通常都自己做自己的部分。',
+            '我會跟團隊討論一些工作，但還不太會討論重要決策。',
+            '我們會一起決定怎麼分工，也讓每個成員發揮所長。',
+            '我能說明我們的團隊如何善用每個成員的優勢來解決問題。',
+            '團隊運作時，我不只用自己和成員的優勢，也持續學新技能。'
+          ]
+        },
+        {
+          name: '我具備人際關係與團隊合作技巧',
+          prompt: '想一想：遇到意見不合時，你通常怎麼處理？',
+          stages: [
+            '我或許能協助任務，但不太清楚為什麼要合作、怎麼開始。',
+            '我意識到我們正努力達成共同目標，但還不太確定做法。',
+            '我能和團隊良好合作，也努力讓大家的學習更成功。',
+            '我理解且能清楚說出團隊成員如何合作、產出最好的成果。',
+            '我能和團隊裡的每個人合作，確保我們的協作過程盡量完善。'
+          ]
+        },
+        {
+          name: '我具備社交、情緒與跨文化覺察',
+          prompt: '想一想：你有沒有試著從跟自己想法不同的同學的角度看事情？',
+          stages: [
+            '我開始注意到自己的行為會影響別人，但還不太懂別人的角度。',
+            '我開始比較理解自己和自己的興趣，也看到自己怎麼影響別人。',
+            '我理解自己是獨特的個體，也會有自己的觀點。',
+            '我能充分理解自己的觀點，也知道這些觀點為何跟別人不同。',
+            '我的社交和情緒技巧，展現出我對自己與自身文化的認同感。'
+          ]
+        },
+        {
+          name: '我能管理團隊動能並因應挑戰',
+          prompt: '想一想：團隊卡住的時候，你是想辦法讓大家繼續前進，還是容易陷入自己的想法？',
+          stages: [
+            '團隊裡有不同意見時，我會覺得很難傾聽或接受。',
+            '我開始成為團隊裡正向關係的一份子，但有時還需要協助。',
+            '身為團隊一員，我通常運作得不錯，但解決問題時仍需協助。',
+            '我能理解自己和別人的觀點，並知道哪些是我們的共同信念。',
+            '我確實理解自己與他人的觀點，能持續一致地向他人學習。'
+          ]
+        },
+        {
+          name: '我善用數位工具支持協作',
+          prompt: '想一想：你曾經用數位工具，跟班上以外的人一起完成任務嗎？',
+          stages: [
+            '我能使用一些科技與人合作。',
+            '我能使用科技與人合作，並檢視我們團隊的效能。',
+            '我能用科技獨立工作，也能與人協作。',
+            '我能清楚說出科技如何改善我們的合作與責任分配。',
+            '我能輕易使用科技，進行有效的協作與新的方法工作、思考。'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'citizenship', name: '公民素養(實踐力)', en: 'Citizenship', abbr: '實', color: 'amber',
+      subdims: [
+        {
+          name: '我具有全球視野',
+          prompt: '想一想：你平常會不會關心花蓮在地或全球發生的議題？',
+          stages: [
+            '我比較關心自己的事，比較少關心社區或國家發生的事。',
+            '我開始探索並對在地及全球議題感到興趣。',
+            '我積極參與世界的議題和挑戰，並感到興趣。',
+            '不論以個人或團體方式，我都能思考議題並採取行動。',
+            '我能用全球公民的身分進行反思並行動。'
+          ]
+        },
+        {
+          name: '我以同理心關注多元價值與人類福祉',
+          prompt: '想一想：面對跟自己文化不同的觀點，你會嘗試理解，還是容易排斥？',
+          stages: [
+            '我從自己的角度看世界，比較難理解和欣賞不同文化的觀點。',
+            '在協助下，我開始理解自己的文化和跟別人的不同之處。',
+            '我開始理解我的出生和成長方式如何影響我是誰、如何看世界。',
+            '我對不同文化和世界觀感到好奇，也對自我有更深的理解。',
+            '我對自身和其他文化有高度理解，能用不同觀點增進對議題的理解。'
+          ]
+        },
+        {
+          name: '我對人類與環境永續抱持真誠關注',
+          prompt: '想一想：你曾經為了環境議題，具體做過什麼行動嗎？',
+          stages: [
+            '我沒有很強烈地意識到自己的行為和環境議題的關聯。',
+            '我開始體認到，每個人的行為都會對環境造成影響。',
+            '我理解照顧地球，對人類自身的生存來說很重要。',
+            '我理解並關心環境議題，能想出可能影響永續發展的解方。',
+            '我對環境議題有高度理解，也願意採取行動創造正向影響。'
+          ]
+        },
+        {
+          name: '我致力解決複雜的真實世界問題',
+          prompt: '想一想：遇到沒有標準答案的真實問題，你會感到害怕，還是躍躍欲試？',
+          stages: [
+            '面對世界議題或挑戰，我沒有太大的安全感。',
+            '在引導下，面對沒有標準答案的真實問題，我開始感到安心。',
+            '面對開放性的真實世界問題，我開始感到有興趣。',
+            '對於會影響自己社區或真實世界的挑戰，我感到有興趣、能安心處理。',
+            '我具備技巧和興趣，能處理開放性、未經事先設計好的真實任務。'
+          ]
+        },
+        {
+          name: '我善用數位工具實踐公民素養',
+          prompt: '想一想：你用過數位工具，真正對某個社會或環境議題產生影響嗎？',
+          stages: [
+            '我還沒用科技來處理跟議題相關的學習。',
+            '我開始學習數位公民素養，用科技溝通時能尊重別人。',
+            '我能使用科技來改善對在地、全球、文化議題的理解。',
+            '我能描述科技如何改善我對全球、環境及文化的理解。',
+            '我能輕易運用科技改善對全球、環境及文化的理解，並鼓勵別人也成為好的數位公民。'
+          ]
+        }
+      ]
+    }
+  ];
+
+  const colorMap = {
+    navy:  { bg: 'bg-navy-700',  bgSoft: 'bg-navy-100',    text: 'text-navy-700' },
+    leaf:  { bg: 'bg-leaf-500',  bgSoft: 'bg-leaf-100',    text: 'text-leaf-600' },
+    amber: { bg: 'bg-amber-500', bgSoft: 'bg-amber-100',   text: 'text-amber-500' }
+  };
+
+  const STAGE_STYLE = [
+    { chip: 'bg-slate-100 text-slate-500',  body: 'bg-slate-50 border-slate-200 text-slate-600' },
+    { chip: 'bg-leaf-50 text-leaf-600',     body: 'bg-leaf-50/60 border-leaf-100 text-slate-700' },
+    { chip: 'bg-leaf-100 text-leaf-600',    body: 'bg-leaf-100/50 border-leaf-100 text-slate-700' },
+    { chip: 'bg-leaf-500 text-white',       body: 'bg-leaf-500/90 border-leaf-500 text-white' },
+    { chip: 'bg-navy-900 text-white',       body: 'bg-navy-900 border-navy-900 text-white' }
+  ];
+
+  let activeId = DATA[0].id;
+  let openIndexes = new Set([0]);
+
+  const tabBar = document.getElementById('tabBar');
+  const subWrap = document.getElementById('subWrap');
+  const reflectCName = document.getElementById('reflectCName');
+  const noteArea = document.getElementById('noteArea');
+  const saveStatus = document.getElementById('saveStatus');
+  const clearNoteBtn = document.getElementById('clearNote');
+
+  function renderTabs() {
+    tabBar.innerHTML = DATA.map(c => {
+      const cm = colorMap[c.color];
+      const isActive = c.id === activeId;
+      return `<button data-id="${c.id}" class="tab-btn ${isActive ? 'active ' + cm.bg : 'bg-white ' + cm.text} px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-slate-200 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full ${isActive ? 'bg-white/20' : cm.bgSoft} flex items-center justify-center text-xs">${c.abbr}</span>
+        ${c.name}
+      </button>`;
+    }).join('');
+
+    tabBar.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeId = btn.dataset.id;
+        openIndexes = new Set([0]);
+        renderTabs();
+        renderSub();
+        loadNote();
+      });
+    });
+  }
+
+  function renderSub() {
+    const c = DATA.find(x => x.id === activeId);
+    const cm = colorMap[c.color];
+    reflectCName.textContent = c.name;
+
+    subWrap.innerHTML = c.subdims.map((sd, i) => {
+      const isOpen = openIndexes.has(i);
+      return `<div class="sub-item ${isOpen ? 'open' : ''} bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden" data-index="${i}">
+        <button class="sub-header w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left">
+          <div class="flex items-center gap-4">
+            <span class="shrink-0 w-9 h-9 rounded-full ${cm.bgSoft} ${cm.text} flex items-center justify-center font-bold text-sm">${i + 1}</span>
+            <div>
+              <p class="font-bold text-navy-700">${sd.name}</p>
+              <p class="text-xs text-slate-400">${c.en} · 子向度 ${i + 1}</p>
+            </div>
+          </div>
+          <svg class="chevron w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="sub-panel px-5 sm:px-6">
+          <div class="pb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              ${sd.stages.map((text, si) => `
+                <div class="rounded-xl border ${STAGE_STYLE[si].body} p-4">
+                  <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded-full mb-2 ${STAGE_STYLE[si].chip}">${STAGE_LABELS[si]}</span>
+                  <p class="text-xs sm:text-sm leading-relaxed">${text}</p>
+                </div>
+              `).join('')}
+            </div>
+            <div class="flex gap-3 ${cm.bgSoft} rounded-xl p-4">
+              <span class="text-lg">🙋</span>
+              <p class="text-sm ${cm.text} font-medium leading-relaxed">${sd.prompt}</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    subWrap.querySelectorAll('.sub-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.sub-item');
+        const idx = Number(item.dataset.index);
+        if (openIndexes.has(idx)) openIndexes.delete(idx);
+        else openIndexes.add(idx);
+        renderSub();
+      });
+    });
+  }
+
+  // ---------- Notes (localStorage) ----------
+  function noteKey() { return 'npdl-student-note-' + activeId; }
+
+  function loadNote() {
+    try {
+      const saved = localStorage.getItem(noteKey());
+      noteArea.value = saved || '';
+      saveStatus.textContent = saved ? '已自動儲存於此瀏覽器' : '尚未輸入';
+    } catch (e) {
+      noteArea.value = '';
+      saveStatus.textContent = '此瀏覽器不支援本機儲存';
+    }
+  }
+
+  let saveTimer = null;
+  noteArea.addEventListener('input', () => {
+    saveStatus.textContent = '輸入中…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(noteKey(), noteArea.value);
+        saveStatus.textContent = '已自動儲存於此瀏覽器';
+      } catch (e) {
+        saveStatus.textContent = '儲存失敗（此瀏覽器不支援本機儲存）';
+      }
+    }, 500);
+  });
+
+  clearNoteBtn.addEventListener('click', () => {
+    noteArea.value = '';
+    try {
+      localStorage.removeItem(noteKey());
+    } catch (e) {}
+    saveStatus.textContent = '尚未輸入';
+  });
+
+  renderTabs();
+  renderSub();
+  loadNote();
+
+  // ---------- Header nav ----------
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconOpen = document.getElementById('iconOpen');
+  const iconClose = document.getElementById('iconClose');
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          iconOpen.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
