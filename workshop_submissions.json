@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "f8c600576f",
+    "dimensionId": "leadership",
+    "groupName": "第一組 鵬耀&芃芃",
+    "text": "測試一下",
+    "ts": 1789002805254
+  },
+  {
+    "id": "2da6605d80",
+    "dimensionId": "vision",
+    "groupName": "麥芃芃",
+    "text": "Yes",
+    "ts": 1789003168665
+  }
+]
